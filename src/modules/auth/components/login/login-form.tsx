@@ -20,8 +20,8 @@ export const LoginForm = ({ methods, onSubmit, isSubmitting }: LoginFormProps) =
             placeholder="Your email"
             autoComplete="email"
             label="Email"
-            variant="filled"
             required
+            // inputWrapperClassName="bg-black-tertiary "
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
@@ -31,7 +31,6 @@ export const LoginForm = ({ methods, onSubmit, isSubmitting }: LoginFormProps) =
             placeholder="Your password"
             autoComplete="current-password"
             label="Password"
-            variant="filled"
             required
           />
           <div className="flex items-center justify-between">
@@ -39,16 +38,24 @@ export const LoginForm = ({ methods, onSubmit, isSubmitting }: LoginFormProps) =
               name="rememberMe"
               control={methods.control}
               label="Remember me on this device"
+              labelClassName="text-white-primary"
             />
             <Link href="/forgot-password">
-              <Typography variant="body-sm" color="error" weight="medium">
+              <Typography variant="body-sm" color="secondary" weight="medium">
                 Forgot password?
               </Typography>
             </Link>
           </div>
         </div>
         <div className="gap-4xl flex flex-col">
-          <Button variant="secondary" type="submit" loading={isSubmitting} fullWidth rounded>
+          <Button
+            variant="black-quaternary"
+            type="submit"
+            loading={isSubmitting}
+            fullWidth
+            size="lg"
+            rounded="full"
+          >
             Sign in to Sweet Pix
           </Button>
           {/* Divider */}
@@ -62,11 +69,11 @@ export const LoginForm = ({ methods, onSubmit, isSubmitting }: LoginFormProps) =
           {/* Google sign in */}
           <Button
             type="button"
-            variant="outlined-gray"
+            variant="outlined-black-quaternary"
             fullWidth
-            rounded
+            rounded="full"
             startIcon={<GoogleIcon />}
-            className="text-primary"
+            className="text-white-primary py-lg"
             onClick={() => window.location.assign("/api/auth/google")}
           >
             Login with Google

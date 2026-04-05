@@ -1,81 +1,59 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { HouseIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { cn } from "@tailwind-config/utils/cn";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button, useAuthRequest, useQueryMe } from "@/shared";
+import { Button, Input, useAuthRequest, useQueryMe, UserAvatar } from "@/shared";
 
-import { HeaderMenu } from "./header-menu";
-
-type HeaderProps = {
-  isLandingPage?: boolean;
-};
-
-export const Header = ({ isLandingPage = false }: HeaderProps) => {
+export const Header = () => {
   const { onOpenLogin } = useAuthRequest();
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: user, isFetching } = useQueryMe();
   const isAuthenticated = !!user && !isFetching;
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  const [search, setSearch] = useState("");
 
   return (
     <header
       className={cn(
-        "border-secondary relative top-0 right-0 left-0 z-50 border-b transition-all duration-300",
-        isLandingPage ? "fixed border-transparent" : "relative",
-        isLandingPage && isScrolled && "border-secondary bg-white"
+        "border-black-quaternary bg-black-secondary sticky top-0 right-0 left-0 z-50 border-b transition-all duration-300"
       )}
     >
-      <div className="flex items-center justify-between px-6 py-4">
+      <div className="py-md flex h-16 items-center justify-between px-6">
         {/* Menu */}
-        <div className="flex w-1/3 items-center">
-          <HeaderMenu isLandingPage={isLandingPage} isScrolled={isScrolled} />
+        <div className="gap-md flex w-1/3 items-center">
+          <div className="bg-black-quaternary px-sm py-xs flex items-center justify-center overflow-hidden rounded-xl">
+            <Image src="/images/kw-logo.png" alt="Sweetpix" width={36} height={36} />
+          </div>
+          <Input
+            type="text"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            leadingIcon={MagnifyingGlassIcon}
+            inputWrapperClassName="bg-black-tertiary border-0 rounded-full text-white-primary"
+            className="text-white-primary"
+          />
         </div>
 
         {/* Logo */}
         <div className="flex w-1/3 items-center justify-center">
           <Link href="/">
-            <Image
-              src={
-                !isLandingPage || isScrolled ? "/images/logo-dark.svg" : "/images/logo-light.svg"
-              }
-              alt="Sweetpix"
-              width={140}
-              height={36}
-              className="h-12 w-auto"
+            <Button
+              variant="no-outlined-primary"
+              size="md"
+              startIcon={<HouseIcon size={24} weight="fill" />}
             />
           </Link>
         </div>
 
         {/* Actions */}
         <div className="flex w-1/3 items-center justify-end gap-8">
-          {!isAuthenticated && (
-            <Button
-              type="button"
-              variant="no-outlined-primary"
-              size="md"
-              onClick={onOpenLogin}
-              rounded
-              className={cn("text-white", (!isLandingPage || isScrolled) && "text-black")}
-            >
-              Login
-            </Button>
-          )}
+          <Link href="/login">
+            <UserAvatar name={user?.name} avatarUrl={user?.avatar_url ?? undefined} />
+          </Link>
         </div>
       </div>
 

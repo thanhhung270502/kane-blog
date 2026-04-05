@@ -27,7 +27,7 @@ export const SessionRepository = {
    */
   async findValidSessionWithUser(token: string): Promise<UserObject | null> {
     const result = await query<UserObject>(
-      `SELECT u.id, u.email, u.name, u.role, u.phone
+      `SELECT u.id, u.email, u.name, u.role, u.phone, u.avatar_url
        FROM user_sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token = $1 AND s.expires_at > NOW() AND u.deleted_at IS NULL`,

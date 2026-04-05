@@ -20,6 +20,7 @@ export interface UserRow {
   role: string;
   phone: string | null;
   google_sub: string | null;
+  avatar_url: string | null;
 }
 
 export interface UserObject {
@@ -28,6 +29,7 @@ export interface UserObject {
   name: string;
   role: EUserRole;
   phone: string | null;
+  avatar_url: string | null;
 }
 
 export interface SessionObject {

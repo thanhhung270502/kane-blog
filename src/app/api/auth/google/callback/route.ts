@@ -89,6 +89,7 @@ export async function GET(request: Request) {
       email: userInfo.email,
       name: userInfo.name,
       emailVerified: userInfo.email_verified,
+      picture: userInfo.picture,
     });
 
     const secure = process.env.NODE_ENV === "production";

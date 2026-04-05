@@ -10,12 +10,20 @@ const renderIcon = (IconComponent: Icon, onClick?: () => void) => {
 };
 
 const inputWrapperVariants = cva(
-  ["relative flex items-center gap-md w-full border border-solid", "transition-colors"],
+  [
+    "relative flex items-center gap-md w-full border border-solid rounded-full",
+    "transition-colors",
+  ],
   {
     variants: {
       variant: {
         default: [
-          "bg-white border-primary shadow-xs",
+          "bg-black-tertiary border-black-tertiary shadow-xs",
+          "focus-within:border-neutral-600 focus-within:ring-1 focus-within:ring-neutral-600",
+          "hover:border-black-quaternary focus-within:hover:border-neutral-600 focus-within:hover:ring-1 focus-within:hover:ring-neutral-600",
+        ],
+        white: [
+          // "bg-white border-primary shadow-xs",
           "focus-within:border-neutral-600 focus-within:ring-1 focus-within:ring-neutral-600",
           "hover:border-primary focus-within:hover:border-neutral-600 focus-within:hover:ring-1 focus-within:hover:ring-neutral-600",
         ],

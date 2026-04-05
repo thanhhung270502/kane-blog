@@ -419,4 +419,12 @@ export const migrations: { name: string; sql: string }[] = [
       CREATE INDEX IF NOT EXISTS idx_post_shares_post_id ON post_shares(post_id);
     `,
   },
+
+  // ── users: avatar_url ─────────────────────────────────────────────────────
+  {
+    name: "162_add_avatar_url_to_users",
+    sql: `
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+    `,
+  },
 ];

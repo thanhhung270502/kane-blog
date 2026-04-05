@@ -3,11 +3,17 @@
 import type { UserObject } from "@common";
 
 import { FeedPage } from "@/modules/social";
+import { Header } from "@/shared";
 
 interface MainPageProps {
   currentUser: UserObject;
 }
 
 export const MainPage = ({ currentUser }: MainPageProps) => {
-  return <FeedPage currentUser={currentUser} />;
+  return (
+    <>
+      <Header />
+      <FeedPage currentUser={currentUser} />
+    </>
+  );
 };
