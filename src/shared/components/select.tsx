@@ -125,7 +125,7 @@ export const controlVariants = cva(
       {
         variant: "default",
         focused: true,
-        class: "border-brand ring-1 ring-brand-purple-500",
+        class: "border-brand-sage-500 ring-1 ring-brand-fern-500",
       },
       {
         variant: "destructive",
@@ -567,6 +567,11 @@ export interface SelectProps
    * Class name for the control
    */
   controlClassName?: string;
+
+  /**
+   * Class name for the single value
+   */
+  singleValueClassName?: string;
 }
 
 const Select = ({
@@ -598,6 +603,7 @@ const Select = ({
   wrapperClassName,
   labelWrapperClassName,
   controlClassName,
+  singleValueClassName,
   ...props
 }: SelectProps) => {
   const autoId = React.useId();
@@ -621,7 +627,7 @@ const Select = ({
       valueContainer: () => valueContainerVariants({ size }),
       input: () => inputVariants({ disabled }),
       placeholder: () => placeholderVariants({ disabled, size }),
-      singleValue: () => singleValueVariants({ disabled, variant, size }),
+      singleValue: () => cn(singleValueVariants({ disabled, variant, size }), singleValueClassName),
       multiValue: () => multiValueVariants({ size }),
       multiValueLabel: () => multiValueLabelVariants({ size }),
       menuPortal: () => "!z-dropdown scrollbar-thin pointer-events-auto",

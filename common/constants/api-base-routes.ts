@@ -8,6 +8,7 @@ export const APIBaseRoutes = {
   BRAINTREE: "/api/braintree",
   TEMPLATE_COLLECTION: "/api/template-collections",
   CHAT: "/api/chat",
+  SOCIAL: "/api/social",
 } as const;
 
 export type APIBaseRoutes = (typeof APIBaseRoutes)[keyof typeof APIBaseRoutes];

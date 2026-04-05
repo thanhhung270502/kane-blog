@@ -1,3 +1,20 @@
+/* Background Black Colors */
+@utility bg-black-primary {
+  background-color: var(--color-black-primary);
+}
+
+@utility bg-black-secondary {
+  background-color: var(--color-black-secondary);
+}
+
+@utility bg-black-tertiary {
+  background-color: var(--color-black-tertiary);
+}
+
+@utility bg-black-quaternary {
+  background-color: var(--color-black-quaternary);
+}
+
 /* Background Brand Primary Colors */
 @utility bg-brand-primary {
   background-color: var(--color-black);

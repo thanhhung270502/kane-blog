@@ -1,3 +1,29 @@
+/* Border Black Colors */
+@utility border-black-primary {
+  border-color: var(--color-black-primary);
+}
+
+@utility border-black-secondary {
+  border-color: var(--color-black-secondary);
+}
+
+@utility border-black-tertiary {
+  border-color: var(--color-black-tertiary);
+}
+
+@utility border-black-quaternary {
+  border-color: var(--color-black-quaternary);
+}
+
+/* Border White Colors */
+@utility border-white-primary {
+  border-color: var(--color-white-primary);
+}
+
+@utility border-white-secondary {
+  border-color: var(--color-white-secondary);
+}
+
 /* Border Primary Colors */
 @utility border-brand-primary {
   border-color: var(--color-black);

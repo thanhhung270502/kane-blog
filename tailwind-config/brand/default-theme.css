@@ -117,6 +117,13 @@
   --color-white: #ffffff;
   --color-black: #000000;
   --color-black-hover: #1E2939;
+  --color-black-primary: #1C1C1D;
+  --color-black-secondary: #252728;
+  --color-black-tertiary: #333334;
+  --color-black-quaternary: #3b3d3e;
+
+  --color-white-primary: #e2e4e8;
+  --color-white-secondary: #b1b3b9;
 
   /* Background Colors */
   --color-bg-primary: var(--color-white);

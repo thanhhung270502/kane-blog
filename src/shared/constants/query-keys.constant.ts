@@ -36,3 +36,15 @@ export const CHAT_KEYS = {
   conversations: () => [...CHAT_KEYS.all(), "conversations"] as const,
   conversation: (id: string) => [...CHAT_KEYS.conversations(), id] as const,
 } as const;
+
+export const SOCIAL_KEYS = {
+  all: () => ["social"] as const,
+  feed: (cursor?: string | null) => [...SOCIAL_KEYS.all(), "feed", cursor ?? "initial"] as const,
+  post: (id: string) => [...SOCIAL_KEYS.all(), "post", id] as const,
+  comments: (postId: string, cursor?: string | null) =>
+    [...SOCIAL_KEYS.all(), "comments", postId, cursor ?? "initial"] as const,
+  profile: (userId: string) => [...SOCIAL_KEYS.all(), "profile", userId] as const,
+  myProfile: () => [...SOCIAL_KEYS.all(), "my-profile"] as const,
+  friends: () => [...SOCIAL_KEYS.all(), "friends"] as const,
+  pendingRequests: () => [...SOCIAL_KEYS.all(), "pending-requests"] as const,
+} as const;

@@ -8,10 +8,18 @@ import type {
 import { EChatConversationStatus, EChatMessageProvider, EChatMessageRole } from "@common";
 
 import { streamChatResponse } from "@/libs/llm";
+import { logger } from "@/libs/logger";
 import { ChatRepository } from "@/repositories/chat.repository";
 
 // Keywords that trigger escalation to a human agent
-const ESCALATION_KEYWORDS = ["human", "agent", "person", "manager", "speak to someone", "real person"];
+const ESCALATION_KEYWORDS = [
+  "human",
+  "agent",
+  "person",
+  "manager",
+  "speak to someone",
+  "real person",
+];
 const SENSITIVE_TOPICS = ["refund", "damage", "broken", "wrong order", "charged twice", "billing"];
 
 function shouldEscalate(message: string): { escalate: boolean; reason: string | null } {
@@ -94,8 +102,7 @@ export const ChatService = {
       );
 
       // Send escalation message as assistant
-      const escalationText =
-        "Let me connect you with a team member. They'll be with you shortly.";
+      const escalationText = "Let me connect you with a team member. They'll be with you shortly.";
       await ChatRepository.createMessage(
         conversationId,
         EChatMessageRole.ASSISTANT,
@@ -144,7 +151,7 @@ export const ChatService = {
           }
           controller.close();
         } catch (err) {
-          console.error("[ChatService] AI stream error:", err);
+          logger.error(`[ChatService] AI stream error: ${err}`);
           controller.error(err);
         }
       },

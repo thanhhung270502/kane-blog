@@ -40,6 +40,30 @@ const buttonVariants = cva(
           "active:bg-brand-secondary active:border-brand-secondary active:text-white",
           "disabled:opacity-50",
         ],
+        "black-primary": [
+          "bg-black-primary text-white-primary border border-black-primary font-semibold",
+          "hover:bg-black-secondary hover:border-black-secondary hover:text-white-primary",
+          "active:bg-black-primary active:border-black-primary active:text-white-primary",
+          "disabled:opacity-50",
+        ],
+        "black-secondary": [
+          "bg-black-secondary text-white border border-black-secondary font-semibold",
+          "hover:bg-black-primary hover:border-black-primary hover:text-white",
+          "active:bg-black-secondary active:border-black-secondary active:text-white",
+          "disabled:opacity-50",
+        ],
+        "black-tertiary": [
+          "bg-black-tertiary text-white border border-black-tertiary font-semibold",
+          "hover:bg-black-primary hover:border-black-primary hover:text-white",
+          "active:bg-black-tertiary active:border-black-tertiary active:text-white",
+          "disabled:opacity-50",
+        ],
+        "black-quaternary": [
+          "bg-black-quaternary text-white border border-black-quaternary font-semibold",
+          "hover:bg-black-primary hover:border-black-primary hover:text-white",
+          "active:bg-black-quaternary active:border-black-quaternary active:text-white",
+          "disabled:opacity-50",
+        ],
         gray: [
           "bg-neutral-200 text-neutral-900 border border-neutral-200 font-semibold",
           "hover:bg-neutral-500 hover:border-neutral-500 hover:text-neutral-900",
@@ -59,6 +83,30 @@ const buttonVariants = cva(
           "active:bg-brand-secondary active:border-brand-secondary active:text-white",
           "disabled:text-brand-secondary-disabled disabled:border-brand-secondary-disabled disabled:shadow-xs",
         ],
+        "outlined-black-primary": [
+          "bg-transparent text-black-primary border border-black-primary font-semibold",
+          "hover:bg-black-secondary hover:border-black-secondary hover:text-white",
+          "active:bg-black-primary active:border-black-primary active:text-white",
+          "disabled:text-black-primary-disabled disabled:border-black-primary-disabled disabled:shadow-xs",
+        ],
+        "outlined-black-secondary": [
+          "bg-transparent text-black-secondary border border-black-secondary font-semibold",
+          "hover:bg-black-primary hover:border-black-primary hover:text-white",
+          "active:bg-black-secondary active:border-black-secondary active:text-white",
+          "disabled:text-black-secondary-disabled disabled:border-black-secondary-disabled disabled:shadow-xs",
+        ],
+        "outlined-black-tertiary": [
+          "bg-transparent text-black-tertiary border border-black-tertiary font-semibold",
+          "hover:bg-black-primary hover:border-black-primary hover:text-white",
+          "active:bg-black-tertiary active:border-black-tertiary active:text-white",
+          "disabled:text-black-tertiary-disabled disabled:border-black-tertiary-disabled disabled:shadow-xs",
+        ],
+        "outlined-black-quaternary": [
+          "bg-transparent text-black-quaternary border border-black-quaternary font-semibold",
+          "hover:bg-black-primary hover:border-black-primary hover:text-white",
+          "active:bg-black-quaternary active:border-black-quaternary active:text-white",
+          "disabled:text-black-quaternary-disabled disabled:border-black-quaternary-disabled disabled:shadow-xs",
+        ],
         "outlined-gray": [
           "bg-transparent text-neutral-400 border border-neutral-200 font-semibold",
           "hover:bg-neutral-500 hover:border-neutral-500 hover:text-neutral-900",
@@ -67,57 +115,100 @@ const buttonVariants = cva(
         ],
         // Text variants
         "text-primary": [
-          "bg-transparent text-black font-semibold p-0! underline",
+          "bg-transparent text-black font-semibold p-0!",
           "hover:text-neutral-600",
           "active:bg-brand-primary active:border-brand-primary active:text-white",
           "disabled:text-brand-primary-disabled disabled:border-brand-primary-disabled disabled:shadow-xs",
         ],
         "text-secondary": [
-          "bg-transparent text-brand-secondary font-semibold p-0! underline",
+          "bg-transparent text-brand-secondary font-semibold p-0!",
           "hover:text-brand-secondary-hover",
           "active:bg-brand-secondary active:border-brand-secondary active:text-white",
           "disabled:text-brand-secondary-disabled disabled:border-brand-secondary-disabled disabled:shadow-xs",
         ],
+        "text-black-primary": [
+          "bg-transparent text-black-primary border border-transparent font-semibold p-0!",
+          "hover:text-black-primary-hover",
+          "active:bg-black-primary active:border-transparent active:text-white",
+          "disabled:text-black-primary-disabled disabled:border-transparent disabled:shadow-xs",
+        ],
+        "text-black-secondary": [
+          "bg-transparent text-black-secondary border border-transparent font-semibold p-0!",
+          "hover:text-black-secondary-hover",
+          "active:bg-black-secondary active:border-transparent active:text-white",
+          "disabled:text-black-secondary-disabled disabled:border-transparent disabled:shadow-xs",
+        ],
+        "text-black-tertiary": [
+          "bg-transparent text-black-tertiary border border-transparent font-semibold p-0!",
+          "hover:text-black-tertiary-hover",
+          "active:bg-black-tertiary active:border-transparent active:text-white",
+          "disabled:text-black-tertiary-disabled disabled:border-transparent disabled:shadow-xs",
+        ],
+        "text-black-quaternary": [
+          "bg-transparent text-black-quaternary border border-transparent font-semibold p-0!",
+          "hover:text-black-quaternary-hover",
+          "active:bg-black-quaternary active:border-transparent active:text-white",
+          "disabled:text-black-quaternary-disabled disabled:border-transparent disabled:shadow-xs",
+        ],
+        "text-white-primary": [
+          "bg-transparent text-white-primary border border-transparent font-semibold p-0!",
+          "hover:text-white-primary-hover",
+          "active:bg-white-primary active:border-transparent active:text-white",
+          "disabled:text-white-primary-disabled disabled:border-transparent disabled:shadow-xs",
+        ],
+        "text-white-secondary": [
+          "bg-transparent text-white-secondary border border-transparent font-semibold p-0!",
+          "hover:text-white-secondary-hover",
+          "active:bg-white-secondary active:border-transparent active:text-white",
+          "disabled:text-white-secondary-disabled disabled:border-transparent disabled:shadow-xs",
+        ],
         "text-gray": [
-          "bg-transparent text-neutral-400 font-semibold p-0! underline",
+          "bg-transparent text-neutral-400 font-semibold p-0!",
           "hover:text-neutral-500",
           "active:bg-neutral-400 active:border-neutral-400 active:text-neutral-900",
           "disabled:text-neutral-400 disabled:border-neutral-400 disabled:shadow-xs",
         ],
         // No Outlined variants
+        // "no-outlined-primary": [
+        //   "bg-transparent text-black font-semibold",
+        //   "hover:bg-brand-primary-hover hover:border-brand-primary-hover hover:text-white",
+        //   "active:bg-brand-primary active:border-brand-primary active:text-white",
+        //   "disabled:text-brand-primary-disabled disabled:border-brand-primary-disabled disabled:shadow-xs",
+        // ],
+        // "no-outlined-secondary": [
+        //   "bg-transparent text-brand-secondary font-semibold",
+        //   "hover:bg-brand-secondary-hover hover:border-brand-secondary-hover hover:text-white",
+        //   "active:bg-brand-secondary active:border-brand-secondary active:text-white",
+        //   "disabled:text-brand-secondary-disabled disabled:border-brand-secondary-disabled disabled:shadow-xs",
+        // ],
         "no-outlined-primary": [
-          "bg-transparent text-black font-semibold",
-          "hover:bg-brand-primary-hover hover:border-brand-primary-hover hover:text-white",
-          "active:bg-brand-primary active:border-brand-primary active:text-white",
-          "disabled:text-brand-primary-disabled disabled:border-brand-primary-disabled disabled:shadow-xs",
+          "bg-transparent text-white-primary border border-transparent font-semibold",
+          "hover:bg-black-quaternary",
+          "active:bg-black-quaternary",
+          "disabled:text-brand-primary-disabled",
         ],
-        "no-outlined-secondary": [
-          "bg-transparent text-brand-secondary font-semibold",
-          "hover:bg-brand-secondary-hover hover:border-brand-secondary-hover hover:text-white",
-          "active:bg-brand-secondary active:border-brand-secondary active:text-white",
-          "disabled:text-brand-secondary-disabled disabled:border-brand-secondary-disabled disabled:shadow-xs",
-        ],
-        "no-outlined-gray": [
-          "bg-transparent text-neutral-400 font-semibold",
-          "hover:bg-neutral-500 hover:border-neutral-500 hover:text-neutral-900",
-          "active:bg-neutral-400 active:border-neutral-400 active:text-neutral-900",
-          "disabled:text-neutral-400 disabled:border-neutral-400 disabled:shadow-xs",
+        "no-outlined-brand-secondary": [
+          "bg-transparent text-brand-secondary border border-transparent font-semibold",
+          "hover:bg-brand-secondary-alt",
+          "active:bg-brand-secondary-alt",
+          "disabled:text-brand-secondary-disabled",
         ],
       },
       size: {
-        xs: ["px-lg py-xs body-md", "gap-xs"],
-        sm: ["px-xl py-sm body-md", "gap-xs"],
-        md: ["px-[14px] py-md body-md", "gap-sm"],
-        lg: ["px-2xl py-lg body-lg", "gap-sm"],
-        xl: ["px-[18px] py-xl body-lg", "gap-sm"],
+        xs: ["px-lg py-xs body-xs", "gap-xs"],
+        sm: ["px-xl py-sm body-xs", "gap-xs"],
+        md: ["px-[14px] py-md body-sm", "gap-sm"],
+        lg: ["px-2xl py-lg body-md", "gap-sm"],
+        xl: ["px-[18px] py-xl body-md", "gap-sm"],
       },
       iconOnly: {
         true: "!p-lg rounded-full",
         false: "",
       },
       rounded: {
-        true: "rounded-full",
-        false: "",
+        regular: "rounded-sm",
+        full: "rounded-full",
+        none: "rounded-none",
       },
       loading: {
         true: "!text-gray !cursor-not-allowed",
@@ -128,7 +219,7 @@ const buttonVariants = cva(
       variant: "primary",
       size: "md",
       iconOnly: false,
-      rounded: false,
+      rounded: "regular",
     },
   }
 );
@@ -164,7 +255,7 @@ export interface ButtonProps
    * Whether the button should be fully rounded (pill shape)
    * @default false
    */
-  rounded?: boolean;
+  rounded?: "regular" | "full" | "none";
   /**
    * Whether the button should take full width
    * @default false
@@ -242,7 +333,7 @@ export const Button = ({
   disabled,
   ref,
   iconWeight = "regular",
-  rounded = false,
+  rounded = "regular",
   fullWidth = false,
   ...props
 }: ButtonProps & { ref?: Ref<HTMLButtonElement> }) => {

@@ -1,3 +1,33 @@
+/* Text Black Colors */
+@utility text-black {
+  color: var(--color-black);
+}
+
+@utility text-black-primary {
+  color: var(--color-black-primary);
+}
+
+@utility text-black-secondary {
+  color: var(--color-black-secondary);
+}
+
+@utility text-black-tertiary {
+  color: var(--color-black-tertiary);
+}
+
+@utility text-black-quaternary {
+  color: var(--color-black-quaternary);
+}
+
+/* Text White Colors */
+@utility text-white-primary {
+  color: var(--color-white-primary);
+}
+
+@utility text-white-secondary {
+  color: var(--color-white-secondary);
+}
+
 /* Text Primary Colors */
 @utility text-brand-primary {
   color: var(--color-white);

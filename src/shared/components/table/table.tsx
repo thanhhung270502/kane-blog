@@ -113,7 +113,7 @@ const EMPTY_STATE_HEIGHT = "h-[200px]";
 const baseContainerClassNames = "flex w-full h-full flex-col shadow-lg rounded-sm overflow-hidden";
 const baseHeaderClassNames = "bg-white flex-shrink-0";
 const baseHeaderCellClassNames = "group font-medium flex items-center gap-sm body-md text-primary";
-const baseRowClassNames = cva("hover:bg-brand-orange-100", {
+const baseRowClassNames = cva("hover:bg-brand-sage-100", {
   variants: {
     variant: {
       default: "bg-white",

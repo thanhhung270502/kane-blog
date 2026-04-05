@@ -189,4 +189,234 @@ export const migrations: { name: string; sql: string }[] = [
       $body$;
     `,
   },
+
+  // ── user_profiles ─────────────────────────────────────────────────────────
+  {
+    name: "100_create_user_profiles",
+    sql: `
+      CREATE TABLE IF NOT EXISTS user_profiles (
+        id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id    UUID        NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        username   VARCHAR(64) UNIQUE,
+        bio        TEXT,
+        avatar_url TEXT,
+        cover_url  TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `,
+  },
+  {
+    name: "101_create_idx_user_profiles_username",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_user_profiles_username ON user_profiles(username) WHERE username IS NOT NULL;
+    `,
+  },
+  {
+    name: "102_create_trg_user_profiles_updated_at",
+    sql: `
+      DO $body$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_trigger WHERE tgname = 'trg_user_profiles_updated_at'
+        ) THEN
+          CREATE TRIGGER trg_user_profiles_updated_at
+            BEFORE UPDATE ON user_profiles
+            FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+        END IF;
+      END;
+      $body$;
+    `,
+  },
+
+  // ── posts ─────────────────────────────────────────────────────────────────
+  {
+    name: "110_create_posts",
+    sql: `
+      CREATE TABLE IF NOT EXISTS posts (
+        id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        author_id      UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        body           TEXT,
+        visibility     TEXT        NOT NULL DEFAULT 'public',
+        shared_post_id UUID,
+        deleted_at     TIMESTAMPTZ,
+        created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `,
+  },
+  {
+    name: "111_create_idx_posts_author_created",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_posts_author_created ON posts(author_id, created_at DESC) WHERE deleted_at IS NULL;
+    `,
+  },
+  {
+    name: "112_create_idx_posts_shared_post_id",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_posts_shared_post_id ON posts(shared_post_id) WHERE shared_post_id IS NOT NULL;
+    `,
+  },
+  {
+    name: "113_create_trg_posts_updated_at",
+    sql: `
+      DO $body$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_trigger WHERE tgname = 'trg_posts_updated_at'
+        ) THEN
+          CREATE TRIGGER trg_posts_updated_at
+            BEFORE UPDATE ON posts
+            FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+        END IF;
+      END;
+      $body$;
+    `,
+  },
+
+  // ── post_attachments ──────────────────────────────────────────────────────
+  {
+    name: "120_create_post_attachments",
+    sql: `
+      CREATE TABLE IF NOT EXISTS post_attachments (
+        id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        post_id    UUID        NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+        url        TEXT        NOT NULL,
+        s3_key     TEXT,
+        kind       TEXT        NOT NULL DEFAULT 'image',
+        sort_order INTEGER     NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `,
+  },
+  {
+    name: "121_create_idx_post_attachments_post_id",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_post_attachments_post_id ON post_attachments(post_id);
+    `,
+  },
+
+  // ── friendships ───────────────────────────────────────────────────────────
+  {
+    name: "130_create_friendships",
+    sql: `
+      CREATE TABLE IF NOT EXISTS friendships (
+        id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        requester_id UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        addressee_id UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        status       TEXT        NOT NULL DEFAULT 'pending',
+        created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT friendships_unique_pair UNIQUE (requester_id, addressee_id),
+        CONSTRAINT friendships_no_self_friend CHECK (requester_id <> addressee_id)
+      );
+    `,
+  },
+  {
+    name: "131_create_idx_friendships_addressee_status",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_friendships_addressee_status ON friendships(addressee_id, status);
+    `,
+  },
+  {
+    name: "132_create_idx_friendships_requester_status",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_friendships_requester_status ON friendships(requester_id, status);
+    `,
+  },
+  {
+    name: "133_create_trg_friendships_updated_at",
+    sql: `
+      DO $body$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_trigger WHERE tgname = 'trg_friendships_updated_at'
+        ) THEN
+          CREATE TRIGGER trg_friendships_updated_at
+            BEFORE UPDATE ON friendships
+            FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+        END IF;
+      END;
+      $body$;
+    `,
+  },
+
+  // ── post_reactions ────────────────────────────────────────────────────────
+  {
+    name: "140_create_post_reactions",
+    sql: `
+      CREATE TABLE IF NOT EXISTS post_reactions (
+        id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        post_id    UUID        NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+        user_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        type       TEXT        NOT NULL DEFAULT 'like',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        CONSTRAINT post_reactions_unique_user_post UNIQUE (post_id, user_id)
+      );
+    `,
+  },
+  {
+    name: "141_create_idx_post_reactions_post_id",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_post_reactions_post_id ON post_reactions(post_id);
+    `,
+  },
+
+  // ── post_comments ─────────────────────────────────────────────────────────
+  {
+    name: "150_create_post_comments",
+    sql: `
+      CREATE TABLE IF NOT EXISTS post_comments (
+        id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        post_id    UUID        NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+        author_id  UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        parent_id  UUID,
+        body       TEXT        NOT NULL,
+        deleted_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `,
+  },
+  {
+    name: "151_create_idx_post_comments_post_id",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_post_comments_post_id ON post_comments(post_id, created_at ASC) WHERE deleted_at IS NULL;
+    `,
+  },
+  {
+    name: "152_create_trg_post_comments_updated_at",
+    sql: `
+      DO $body$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_trigger WHERE tgname = 'trg_post_comments_updated_at'
+        ) THEN
+          CREATE TRIGGER trg_post_comments_updated_at
+            BEFORE UPDATE ON post_comments
+            FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+        END IF;
+      END;
+      $body$;
+    `,
+  },
+
+  // ── post_shares ───────────────────────────────────────────────────────────
+  {
+    name: "160_create_post_shares",
+    sql: `
+      CREATE TABLE IF NOT EXISTS post_shares (
+        id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        post_id    UUID        NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+        user_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `,
+  },
+  {
+    name: "161_create_idx_post_shares_post_id",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_post_shares_post_id ON post_shares(post_id);
+    `,
+  },
 ];

@@ -48,7 +48,7 @@ export const LoginForm = ({ methods, onSubmit, isSubmitting }: LoginFormProps) =
           </div>
         </div>
         <div className="gap-4xl flex flex-col">
-          <Button type="submit" loading={isSubmitting} fullWidth rounded>
+          <Button variant="secondary" type="submit" loading={isSubmitting} fullWidth rounded>
             Sign in to Sweet Pix
           </Button>
           {/* Divider */}
@@ -69,7 +69,7 @@ export const LoginForm = ({ methods, onSubmit, isSubmitting }: LoginFormProps) =
             className="text-primary"
             onClick={() => window.location.assign("/api/auth/google")}
           >
-            Sign in Google
+            Login with Google
           </Button>
         </div>
       </div>

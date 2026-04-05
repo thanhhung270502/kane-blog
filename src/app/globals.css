@@ -2,8 +2,8 @@
 @import "../../tailwind-config/shared-styles.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: var(--color-black-primary);
+  --foreground: var(--color-white-primary);
 }
 
 @theme inline {

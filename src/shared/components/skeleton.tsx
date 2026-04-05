@@ -9,7 +9,9 @@ interface SkeletonProps {
 }
 
 export const Skeleton = ({ className, style }: SkeletonProps) => {
-  return <div className={cn("bg-quaternary animate-pulse rounded-md", className)} style={style} />;
+  return (
+    <div className={cn("bg-black-quaternary animate-pulse rounded-md", className)} style={style} />
+  );
 };
 
 Skeleton.displayName = "Skeleton";

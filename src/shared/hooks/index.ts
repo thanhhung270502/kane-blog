@@ -6,3 +6,4 @@ export * from "./useMediaQuery";
 // Data hooks
 export * from "./data/auth";
 export * from "./data/chat";
+export * from "./data/social";

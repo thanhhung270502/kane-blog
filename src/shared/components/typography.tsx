@@ -19,8 +19,8 @@ const typographyVariants = cva("", {
       "body-xs": "body-xs",
     },
     color: {
-      primary: "text-primary",
-      secondary: "text-secondary",
+      primary: "text-white-primary",
+      secondary: "text-white-secondary",
       black: "text-black",
       white: "text-white",
       disabled: "text-disabled",
@@ -43,7 +43,7 @@ const typographyVariants = cva("", {
   },
   defaultVariants: {
     variant: "body-md",
-    color: "black",
+    color: "primary",
   },
 });
 
@@ -74,7 +74,7 @@ export interface TypographyProps
 
 export const Typography = ({
   variant = "body-md",
-  color = "black",
+  color = "primary",
   weight,
   font,
   as,

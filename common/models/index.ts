@@ -6,3 +6,4 @@ export * from "./base-model";
 // API models
 export * from "./auth";
 export * from "./chat";
+export * from "./social";
