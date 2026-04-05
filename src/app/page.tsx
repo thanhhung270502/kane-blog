@@ -1,5 +1,5 @@
-import { LandingPage } from "@/modules/landing";
+import { MainPage } from "@/modules/main";
 
-export default function Landing() {
-  return <LandingPage />;
+export default function Page() {
+  return <MainPage />;
 }

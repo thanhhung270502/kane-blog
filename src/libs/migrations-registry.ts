@@ -30,16 +30,19 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── users ────────────────────────────────────────────────────────────────────
   // NOTE: last_order_id has no FK here — circular FK with orders is added in migration 040.
+  // NOTE: password_hash is nullable to support Google-only accounts.
+  // NOTE: google_sub stores the Google user ID for OAuth login.
   {
     name: "006_create_users",
     sql: `
       CREATE TABLE IF NOT EXISTS users (
         id            UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
         email         VARCHAR(255)  NOT NULL UNIQUE,
-        password_hash TEXT          NOT NULL,
+        password_hash TEXT,
         name          VARCHAR(255)  NOT NULL DEFAULT '',
         role          VARCHAR(50)   NOT NULL DEFAULT 'user',
         phone         VARCHAR(64),
+        google_sub    VARCHAR(255)  UNIQUE,
         last_order_id UUID,
         search_terms  TEXT[],
         deleted_at    TIMESTAMPTZ,
@@ -62,6 +65,13 @@ export const migrations: { name: string; sql: string }[] = [
         END IF;
       END;
       $body$;
+    `,
+  },
+
+  {
+    name: "007b_create_idx_users_google_sub",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_users_google_sub ON users(google_sub) WHERE google_sub IS NOT NULL;
     `,
   },
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import localFont from "next/font/local";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { BaseLayout, CustomToaster, QueryProvider } from "@/shared";
 
@@ -38,10 +39,12 @@ export default function RootLayout({
       className={`${roboto.variable} ${tradeGothic.variable}`}
     >
       <body className={roboto.className} suppressHydrationWarning>
-        <QueryProvider>
-          <BaseLayout>{children}</BaseLayout>
-          <CustomToaster />
-        </QueryProvider>
+        <NuqsAdapter>
+          <QueryProvider>
+            <BaseLayout>{children}</BaseLayout>
+            <CustomToaster />
+          </QueryProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

@@ -15,10 +15,11 @@ export enum EUserRole {
 export interface UserRow {
   id: string;
   email: string;
-  password_hash: string;
+  password_hash: string | null;
   name: string;
   role: string;
   phone: string | null;
+  google_sub: string | null;
 }
 
 export interface UserObject {

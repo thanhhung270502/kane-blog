@@ -31,11 +31,16 @@ export const AuthService = {
 
   /**
    * Authenticate a user by email and password.
-   * Throws an error if credentials are invalid.
+   * Throws an error if credentials are invalid or if the account is Google-only.
    */
   async login(email: string, plainTextPassword: string): Promise<SessionObject> {
     const user = await UserRepository.findByEmail(email);
     if (!user) {
+      throw new Error("Invalid email or password");
+    }
+
+    // Google-only accounts have no password — deny password-based login
+    if (!user.password_hash) {
       throw new Error("Invalid email or password");
     }
 
@@ -46,6 +51,47 @@ export const AuthService = {
 
     const session = await this.createSession(user.id);
     return session;
+  },
+
+  /**
+   * Sign in (or register) a user via Google OAuth.
+   * Strategy:
+   *   1. Find by google_sub → existing Google user
+   *   2. Find by email → link google_sub to existing account
+   *   3. Otherwise → create a new Google-only account
+   */
+  async signInWithGoogle(profile: {
+    sub: string;
+    email: string;
+    name: string;
+    emailVerified: boolean;
+  }): Promise<SessionObject> {
+    if (!profile.emailVerified) {
+      throw new Error("Google account email is not verified");
+    }
+
+    // 1. Look up by google_sub first
+    let user = await UserRepository.findByGoogleSub(profile.sub);
+
+    if (!user) {
+      // 2. Look up by email — link if found
+      const existingByEmail = await UserRepository.findByEmail(profile.email);
+
+      if (existingByEmail) {
+        await UserRepository.linkGoogleSub(existingByEmail.id, profile.sub);
+        user = { ...existingByEmail, google_sub: profile.sub };
+      } else {
+        // 3. Create brand-new Google-only account
+        const created = await UserRepository.createGoogleUser(
+          profile.email,
+          profile.name,
+          profile.sub
+        );
+        user = { ...created, password_hash: null, google_sub: profile.sub };
+      }
+    }
+
+    return this.createSession(user.id);
   },
 
   /**

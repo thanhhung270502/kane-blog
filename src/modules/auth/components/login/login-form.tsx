@@ -67,6 +67,7 @@ export const LoginForm = ({ methods, onSubmit, isSubmitting }: LoginFormProps) =
             rounded
             startIcon={<GoogleIcon />}
             className="text-primary"
+            onClick={() => window.location.assign("/api/auth/google")}
           >
             Sign in Google
           </Button>
