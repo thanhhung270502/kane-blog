@@ -1,0 +1,22 @@
+services:
+    localstack:
+        image: localstack/localstack
+        environment:
+            SERVICES: "s3, sqs, opensearch, sns"
+            HOSTNAME: localstack
+            AWS_ACCESS_KEY_ID: test
+            AWS_SECRET_ACCESS_KEY: test
+        networks:
+            - data_net
+        ports:
+            - "[::1]:4566:4566"
+            - "127.0.0.1:4566:4566" # LocalStack Gateway
+            - "127.0.0.1:4510-4559:4510-4559" # external services port range
+
+volumes:
+    cache:
+        driver: local
+
+networks:
+    data_net:
+        name: data_net

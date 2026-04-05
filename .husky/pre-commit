@@ -1,0 +1,2 @@
+echo "Executing pre-commit hook..."
+npm run lint:staged
