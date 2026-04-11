@@ -249,3 +249,15 @@ export interface UpsertProfileRequest {
 export interface UpsertProfileResponse {
   profile: UserProfileObject;
 }
+
+/** User posts */
+export interface GetUserPostsRequest {
+  cursor?: string | null;
+  limit?: number;
+}
+
+export interface GetUserPostsResponse {
+  posts: PostObject[];
+  nextCursor: string | null;
+  hasMore: boolean;
+}

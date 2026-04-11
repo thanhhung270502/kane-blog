@@ -1,6 +1,8 @@
 "use client";
 
-import { Button, FormProvider, RHFInput, RHFPassword } from "@/shared";
+import Link from "next/link";
+
+import { Button, FormProvider, RHFInput, RHFPassword, Typography } from "@/shared";
 
 import type { UseSignupReturn } from "../../hooks";
 
@@ -9,7 +11,7 @@ type SignupFormProps = UseSignupReturn;
 export const SignupForm = ({ methods, onSubmit, isSubmitting }: SignupFormProps) => {
   return (
     <FormProvider formMethods={methods} onSubmit={onSubmit}>
-      <div className="gap-4xl flex flex-1 flex-col justify-between overflow-y-auto p-[56px]">
+      <div className="gap-4xl p-4xl flex flex-1 flex-col justify-between overflow-y-auto">
         <div className="gap-2xl flex flex-col">
           <RHFInput
             name="fullName"
@@ -18,7 +20,6 @@ export const SignupForm = ({ methods, onSubmit, isSubmitting }: SignupFormProps)
             placeholder="Your full name"
             autoComplete="name"
             label="Full name"
-            variant="filled"
             required
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
@@ -30,17 +31,7 @@ export const SignupForm = ({ methods, onSubmit, isSubmitting }: SignupFormProps)
             placeholder="Your email"
             autoComplete="email"
             label="Email"
-            variant="filled"
             required
-          />
-          <RHFInput
-            name="company"
-            control={methods.control}
-            type="text"
-            placeholder="Company name"
-            autoComplete="organization"
-            label="Company"
-            variant="filled"
           />
           <RHFPassword
             name="password"
@@ -48,14 +39,26 @@ export const SignupForm = ({ methods, onSubmit, isSubmitting }: SignupFormProps)
             placeholder="Your password"
             autoComplete="new-password"
             label="Password"
-            variant="filled"
             required
           />
         </div>
         <div className="gap-4xl flex flex-col">
-          <Button type="submit" loading={isSubmitting} fullWidth rounded>
+          <Button
+            variant="black-quaternary"
+            type="submit"
+            loading={isSubmitting}
+            size="lg"
+            fullWidth
+            rounded="full"
+          >
             Sign up with email
           </Button>
+          <Typography variant="body-sm" color="secondary" weight="regular" className="text-center">
+            Already have an account?{" "}
+            <Link href="/login">
+              <Button variant="text-secondary">Sign in</Button>
+            </Link>
+          </Typography>
         </div>
       </div>
     </FormProvider>

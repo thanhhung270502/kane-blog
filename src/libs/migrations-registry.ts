@@ -33,7 +33,7 @@ export const migrations: { name: string; sql: string }[] = [
   // NOTE: password_hash is nullable to support Google-only accounts.
   // NOTE: google_sub stores the Google user ID for OAuth login.
   {
-    name: "006_create_users",
+    name: "001_create_users",
     sql: `
       CREATE TABLE IF NOT EXISTS users (
         id            UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -69,7 +69,7 @@ export const migrations: { name: string; sql: string }[] = [
   },
 
   {
-    name: "007b_create_idx_users_google_sub",
+    name: "002_create_idx_users_google_sub",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_users_google_sub ON users(google_sub) WHERE google_sub IS NOT NULL;
     `,
@@ -77,7 +77,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── user_sessions ────────────────────────────────────────────────────────────
   {
-    name: "008_create_user_sessions",
+    name: "003_create_user_sessions",
     sql: `
       CREATE TABLE IF NOT EXISTS user_sessions (
         id         UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -89,20 +89,20 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "009_create_idx_user_sessions_user_id",
+    name: "004_create_idx_user_sessions_user_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON user_sessions(user_id);
     `,
   },
   {
-    name: "010_create_idx_user_sessions_expires_at",
+    name: "005_create_idx_user_sessions_expires_at",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_user_sessions_expires_at ON user_sessions(expires_at);
     `,
   },
   // ── chat_conversations ────────────────────────────────────────────────────
   {
-    name: "011_create_chat_conversations",
+    name: "006_create_chat_conversations",
     sql: `
       CREATE TABLE IF NOT EXISTS chat_conversations (
         id                UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -118,21 +118,21 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "012_create_idx_chat_conversations_user_id",
+    name: "007_create_idx_chat_conversations_user_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_chat_conversations_user_id
         ON chat_conversations(user_id) WHERE deleted_at IS NULL;
     `,
   },
   {
-    name: "013_create_idx_chat_conversations_status",
+    name: "008_create_idx_chat_conversations_status",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_chat_conversations_status
         ON chat_conversations(status) WHERE deleted_at IS NULL;
     `,
   },
   {
-    name: "014_create_chat_conversations_updated_at_trigger",
+    name: "009_create_chat_conversations_updated_at_trigger",
     sql: `
       DO $body$
       BEGIN
@@ -150,7 +150,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── chat_messages ─────────────────────────────────────────────────────────
   {
-    name: "015_create_chat_messages",
+    name: "010_create_chat_messages",
     sql: `
       CREATE TABLE IF NOT EXISTS chat_messages (
         id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -167,14 +167,14 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "016_create_idx_chat_messages_conversation_id",
+    name: "011_create_idx_chat_messages_conversation_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_chat_messages_conversation_id
         ON chat_messages(conversation_id) WHERE deleted_at IS NULL;
     `,
   },
   {
-    name: "017_create_chat_messages_updated_at_trigger",
+    name: "012_create_chat_messages_updated_at_trigger",
     sql: `
       DO $body$
       BEGIN
@@ -192,7 +192,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── user_profiles ─────────────────────────────────────────────────────────
   {
-    name: "100_create_user_profiles",
+    name: "013_create_user_profiles",
     sql: `
       CREATE TABLE IF NOT EXISTS user_profiles (
         id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -207,13 +207,13 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "101_create_idx_user_profiles_username",
+    name: "014_create_idx_user_profiles_username",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_user_profiles_username ON user_profiles(username) WHERE username IS NOT NULL;
     `,
   },
   {
-    name: "102_create_trg_user_profiles_updated_at",
+    name: "015_create_trg_user_profiles_updated_at",
     sql: `
       DO $body$
       BEGIN
@@ -231,7 +231,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── posts ─────────────────────────────────────────────────────────────────
   {
-    name: "110_create_posts",
+    name: "016_create_posts",
     sql: `
       CREATE TABLE IF NOT EXISTS posts (
         id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -246,19 +246,19 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "111_create_idx_posts_author_created",
+    name: "017_create_idx_posts_author_created",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_posts_author_created ON posts(author_id, created_at DESC) WHERE deleted_at IS NULL;
     `,
   },
   {
-    name: "112_create_idx_posts_shared_post_id",
+    name: "018_create_idx_posts_shared_post_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_posts_shared_post_id ON posts(shared_post_id) WHERE shared_post_id IS NOT NULL;
     `,
   },
   {
-    name: "113_create_trg_posts_updated_at",
+    name: "019_create_trg_posts_updated_at",
     sql: `
       DO $body$
       BEGIN
@@ -276,7 +276,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── post_attachments ──────────────────────────────────────────────────────
   {
-    name: "120_create_post_attachments",
+    name: "020_create_post_attachments",
     sql: `
       CREATE TABLE IF NOT EXISTS post_attachments (
         id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -290,7 +290,7 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "121_create_idx_post_attachments_post_id",
+    name: "021_create_idx_post_attachments_post_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_post_attachments_post_id ON post_attachments(post_id);
     `,
@@ -298,7 +298,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── friendships ───────────────────────────────────────────────────────────
   {
-    name: "130_create_friendships",
+    name: "022_create_friendships",
     sql: `
       CREATE TABLE IF NOT EXISTS friendships (
         id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -313,19 +313,19 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "131_create_idx_friendships_addressee_status",
+    name: "023_create_idx_friendships_addressee_status",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_friendships_addressee_status ON friendships(addressee_id, status);
     `,
   },
   {
-    name: "132_create_idx_friendships_requester_status",
+    name: "024_create_idx_friendships_requester_status",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_friendships_requester_status ON friendships(requester_id, status);
     `,
   },
   {
-    name: "133_create_trg_friendships_updated_at",
+    name: "025_create_trg_friendships_updated_at",
     sql: `
       DO $body$
       BEGIN
@@ -343,7 +343,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── post_reactions ────────────────────────────────────────────────────────
   {
-    name: "140_create_post_reactions",
+    name: "026_create_post_reactions",
     sql: `
       CREATE TABLE IF NOT EXISTS post_reactions (
         id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -356,7 +356,7 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "141_create_idx_post_reactions_post_id",
+    name: "027_create_idx_post_reactions_post_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_post_reactions_post_id ON post_reactions(post_id);
     `,
@@ -364,7 +364,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── post_comments ─────────────────────────────────────────────────────────
   {
-    name: "150_create_post_comments",
+    name: "028_create_post_comments",
     sql: `
       CREATE TABLE IF NOT EXISTS post_comments (
         id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -379,13 +379,13 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "151_create_idx_post_comments_post_id",
+    name: "029_create_idx_post_comments_post_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_post_comments_post_id ON post_comments(post_id, created_at ASC) WHERE deleted_at IS NULL;
     `,
   },
   {
-    name: "152_create_trg_post_comments_updated_at",
+    name: "030_create_trg_post_comments_updated_at",
     sql: `
       DO $body$
       BEGIN
@@ -403,7 +403,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── post_shares ───────────────────────────────────────────────────────────
   {
-    name: "160_create_post_shares",
+    name: "031_create_post_shares",
     sql: `
       CREATE TABLE IF NOT EXISTS post_shares (
         id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -414,7 +414,7 @@ export const migrations: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "161_create_idx_post_shares_post_id",
+    name: "032_create_idx_post_shares_post_id",
     sql: `
       CREATE INDEX IF NOT EXISTS idx_post_shares_post_id ON post_shares(post_id);
     `,
@@ -422,7 +422,7 @@ export const migrations: { name: string; sql: string }[] = [
 
   // ── users: avatar_url ─────────────────────────────────────────────────────
   {
-    name: "162_add_avatar_url_to_users",
+    name: "033_add_avatar_url_to_users",
     sql: `
       ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
     `,

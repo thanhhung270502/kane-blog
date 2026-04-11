@@ -20,6 +20,7 @@ import type {
   ToggleReactionResponse,
   UpsertProfileRequest,
   UpsertProfileResponse,
+  GetUserPostsResponse,
 } from "./social-model";
 
 /** Feed */
@@ -134,4 +135,12 @@ export const API_UPSERT_PROFILE: APIDefinition = {
   requestBody: {} as UpsertProfileRequest,
   responseBody: {} as UpsertProfileResponse,
   buildUrlPath: () => `${APIBaseRoutes.SOCIAL}/profile`,
+};
+
+export const API_GET_USER_POSTS: APIDefinition = {
+  method: APIMethod.GET,
+  baseUrl: APIBaseRoutes.SOCIAL,
+  subUrl: "/users/:id/posts",
+  responseBody: {} as GetUserPostsResponse,
+  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/users/${id}/posts`,
 };

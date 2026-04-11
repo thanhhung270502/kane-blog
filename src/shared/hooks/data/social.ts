@@ -3,21 +3,20 @@
 import type {
   CreateCommentRequest,
   CreatePostRequest,
+  GetCommentsResponse,
   GetFeedResponse,
+  GetProfileResponse,
+  GetUserPostsResponse,
   RespondFriendRequestRequest,
   SendFriendRequestRequest,
+  ToggleReactionRequest,
+  ToggleReactionResponse,
   UpsertProfileRequest,
 } from "@common";
 import { toast } from "sonner";
 
 import type { MutationProps, QueryProps } from "@/shared";
-import {
-  asError,
-  SOCIAL_KEYS,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@/shared";
+import { asError, SOCIAL_KEYS, useMutation, useQuery, useQueryClient } from "@/shared";
 import {
   createComment,
   createPost,
@@ -27,6 +26,7 @@ import {
   getFriends,
   getMyProfile,
   getPendingRequests,
+  getUserPosts,
   getUserProfile,
   removeFriend,
   respondFriendRequest,
@@ -74,13 +74,16 @@ export const useDeletePostMutation = (props: MutationProps<void, string> = {}) =
   });
 };
 
-export const useToggleReactionMutation = (
-  postId: string,
-  props: MutationProps<unknown, { type?: string }> = {}
-) => {
+type ToggleReactionMutationProps = MutationProps<
+  ToggleReactionResponse,
+  ToggleReactionRequest & { postId: string }
+>;
+
+export const useToggleReactionMutation = (props: ToggleReactionMutationProps = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { type?: string } = {}) => toggleReaction(postId, data),
+    mutationFn: ({ postId, type }: ToggleReactionRequest & { postId: string }) =>
+      toggleReaction(postId, { type }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.feed() });
     },
@@ -89,7 +92,9 @@ export const useToggleReactionMutation = (
   });
 };
 
-export const useSharePostMutation = (props: MutationProps<unknown, { postId: string; body?: string }> = {}) => {
+export const useSharePostMutation = (
+  props: MutationProps<unknown, { postId: string; body?: string }> = {}
+) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ postId, body }: { postId: string; body?: string }) => sharePost(postId, body),
@@ -104,7 +109,7 @@ export const useSharePostMutation = (props: MutationProps<unknown, { postId: str
 
 // ─── Comments ─────────────────────────────────────────────────────────────────
 
-export const useQueryComments = (postId: string, props: QueryProps<unknown> = {}) => {
+export const useQueryComments = (postId: string, props: QueryProps<GetCommentsResponse> = {}) => {
   return useQuery({
     queryKey: SOCIAL_KEYS.comments(postId),
     queryFn: () => getComments(postId),
@@ -193,7 +198,7 @@ export const useRemoveFriendMutation = (props: MutationProps<void, string> = {})
 
 // ─── Profile ──────────────────────────────────────────────────────────────────
 
-export const useQueryUserProfile = (userId: string, props: QueryProps<unknown> = {}) => {
+export const useQueryUserProfile = (userId: string, props: QueryProps<GetProfileResponse> = {}) => {
   return useQuery({
     queryKey: SOCIAL_KEYS.profile(userId),
     queryFn: () => getUserProfile(userId),
@@ -202,7 +207,7 @@ export const useQueryUserProfile = (userId: string, props: QueryProps<unknown> =
   });
 };
 
-export const useQueryMyProfile = (props: QueryProps<unknown> = {}) => {
+export const useQueryMyProfile = (props: QueryProps<GetProfileResponse> = {}) => {
   return useQuery({
     queryKey: SOCIAL_KEYS.myProfile(),
     queryFn: getMyProfile,
@@ -221,6 +226,15 @@ export const useUpsertProfileMutation = (
       await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.myProfile() });
     },
     onError: (error) => toast.error(asError(error).message),
+    ...props,
+  });
+};
+
+export const useQueryUserPosts = (userId: string, props: QueryProps<GetUserPostsResponse> = {}) => {
+  return useQuery({
+    queryKey: SOCIAL_KEYS.userPosts(userId),
+    queryFn: () => getUserPosts(userId),
+    enabled: !!userId,
     ...props,
   });
 };

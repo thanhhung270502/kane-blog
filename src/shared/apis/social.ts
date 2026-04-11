@@ -8,6 +8,7 @@ import type {
   GetFriendsResponse,
   GetPendingFriendRequestsResponse,
   GetProfileResponse,
+  GetUserPostsResponse,
   RespondFriendRequestRequest,
   RespondFriendRequestResponse,
   SendFriendRequestRequest,
@@ -25,6 +26,7 @@ import {
   API_GET_FRIENDS,
   API_GET_PENDING_FRIEND_REQUESTS,
   API_GET_PROFILE,
+  API_GET_USER_POSTS,
   API_REMOVE_FRIEND,
   API_RESPOND_FRIEND_REQUEST,
   API_SEND_FRIEND_REQUEST,
@@ -132,4 +134,15 @@ export const getMyProfile = async (): Promise<GetProfileResponse> => {
 export const upsertProfile = async (data: UpsertProfileRequest): Promise<UpsertProfileResponse> => {
   const response = await postRequest({ path: API_UPSERT_PROFILE.buildUrlPath({}), data });
   return response.data;
+};
+
+export const getUserPosts = async (
+  userId: string,
+  cursor?: string | null,
+  limit = 20
+): Promise<GetUserPostsResponse> => {
+  return await getRequest({
+    path: API_GET_USER_POSTS.buildUrlPath(userId),
+    params: { ...(cursor ? { cursor } : {}), limit },
+  });
 };

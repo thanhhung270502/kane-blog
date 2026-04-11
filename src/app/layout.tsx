@@ -22,9 +22,8 @@ const tradeGothic = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Order 8x8 in. Photo Tile Prints | Stick Your Pics to Your Walls",
-  description:
-    "Order premium 8x8 in. stickable photo tiles. Decorate with your pics. Select, crop & submit. No wall damage. Won't fade or warp. Free shipping.",
+  title: "KaneWuyn Blog",
+  description: "KaneWuyn Blog",
 };
 
 export default function RootLayout({

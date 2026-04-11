@@ -1,14 +1,11 @@
-import type { NextRequest} from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { getSessionUser } from "@/libs/auth-session";
 import { FriendshipService } from "@/services/friendship.service";
 import { PostService } from "@/services/post.service";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -18,7 +15,7 @@ export async function GET(
 
   try {
     const [{ profile }, friendshipStatus] = await Promise.all([
-      PostService.getProfile(id, user.id),
+      PostService.getProfile(id),
       FriendshipService.getStatus(user.id, id),
     ]);
 

@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 
 import { logger } from "@/libs/logger";
@@ -23,7 +24,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const useLogin = () => {
   const { isLoginOpen, onLoginOpenChange, onOpenSignup } = useAuthRequest();
-
+  const router = useRouter();
   const loginMutation = useLoginMutation();
 
   const methods = useForm<LoginFormData>({
@@ -42,7 +43,7 @@ export const useLogin = () => {
         password: values.password,
       });
       methods.reset();
-      onLoginOpenChange(false);
+      router.push("/");
     } catch (error) {
       logger.error(asError(error).message);
     }

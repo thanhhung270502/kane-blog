@@ -4,6 +4,7 @@ import type {
   EAttachmentKind,
   GetCommentsResponse,
   GetFeedResponse,
+  GetUserPostsResponse,
   PostAttachmentObject,
   PostAuthorObject,
   PostCommentObject,
@@ -295,7 +296,7 @@ export const PostService = {
             userId: profile.user_id,
             username: profile.username,
             bio: profile.bio,
-            avatarUrl: profile.avatar_url,
+            avatarUrl: profile.avatar_url ?? user?.avatar_url ?? null,
             coverUrl: profile.cover_url,
             name: user?.name ?? "",
             createdAt: profile.created_at,
@@ -305,11 +306,34 @@ export const PostService = {
             userId: targetUserId,
             username: null,
             bio: null,
-            avatarUrl: null,
+            avatarUrl: user?.avatar_url ?? null,
             coverUrl: null,
             name: user?.name ?? "",
             createdAt: new Date().toISOString(),
           },
+    };
+  },
+
+  /**
+   * Get paginated posts for a specific user (respecting visibility rules).
+   */
+  async getUserPosts(
+    authorId: string,
+    viewerId: string,
+    limit: number,
+    cursor: string | null
+  ): Promise<GetUserPostsResponse> {
+    const effectiveLimit = Math.min(limit, 50);
+    const rows = await PostRepository.getByAuthor(authorId, viewerId, effectiveLimit + 1, cursor);
+
+    const hasMore = rows.length > effectiveLimit;
+    const pageRows = hasMore ? rows.slice(0, effectiveLimit) : rows;
+    const posts = await buildPostObjects(pageRows, viewerId);
+
+    return {
+      posts,
+      nextCursor: hasMore ? pageRows[pageRows.length - 1].created_at : null,
+      hasMore,
     };
   },
 

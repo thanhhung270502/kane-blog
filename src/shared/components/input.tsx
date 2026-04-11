@@ -163,8 +163,8 @@ const inputVariants = cva(["w-full bg-transparent border-0 outline-none"], {
       md: ["body-md"],
     },
     variant: {
-      default: ["placeholder:text-quaternary", "text-primary"],
-      filled: ["placeholder:text-quaternary", "text-primary"],
+      default: ["placeholder:text-quaternary", "text-white-primary"],
+      filled: ["placeholder:text-quaternary", "text-white-primary"],
       destructive: ["placeholder:text-quaternary", "text-error-primary"],
     },
     disabled: {

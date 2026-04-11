@@ -47,4 +47,5 @@ export const SOCIAL_KEYS = {
   myProfile: () => [...SOCIAL_KEYS.all(), "my-profile"] as const,
   friends: () => [...SOCIAL_KEYS.all(), "friends"] as const,
   pendingRequests: () => [...SOCIAL_KEYS.all(), "pending-requests"] as const,
+  userPosts: (userId: string) => [...SOCIAL_KEYS.all(), "user-posts", userId] as const,
 } as const;
