@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
     const result = await PostService.upsertProfile(user.id, {
       username: body.username,
       bio: body.bio,
-      avatarUrl: body.avatarUrl,
-      coverUrl: body.coverUrl,
+      avatarPath: body.avatarPath,
+      coverPath: body.coverPath,
     });
     return NextResponse.json(result);
   } catch (err) {

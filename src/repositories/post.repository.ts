@@ -304,19 +304,19 @@ export const PostRepository = {
 
   async upsertProfile(
     userId: string,
-    data: { username?: string; bio?: string; avatarUrl?: string; coverUrl?: string }
+    data: { username?: string; bio?: string; avatarPath?: string; coverPath?: string }
   ): Promise<UserProfileRow> {
     const result = await query<UserProfileRow>(
-      `INSERT INTO user_profiles (user_id, username, bio, avatar_url, cover_url)
+      `INSERT INTO user_profiles (user_id, username, bio, avatar_path, cover_path)
        VALUES ($1, $2, $3, $4, $5)
        ON CONFLICT (user_id) DO UPDATE
-         SET username   = COALESCE(EXCLUDED.username, user_profiles.username),
-             bio        = COALESCE(EXCLUDED.bio, user_profiles.bio),
-             avatar_url = COALESCE(EXCLUDED.avatar_url, user_profiles.avatar_url),
-             cover_url  = COALESCE(EXCLUDED.cover_url, user_profiles.cover_url),
-             updated_at = NOW()
+         SET username    = COALESCE(EXCLUDED.username, user_profiles.username),
+             bio         = COALESCE(EXCLUDED.bio, user_profiles.bio),
+             avatar_path = COALESCE(EXCLUDED.avatar_path, user_profiles.avatar_path),
+             cover_path  = COALESCE(EXCLUDED.cover_path, user_profiles.cover_path),
+             updated_at  = NOW()
        RETURNING *`,
-      [userId, data.username ?? null, data.bio ?? null, data.avatarUrl ?? null, data.coverUrl ?? null]
+      [userId, data.username ?? null, data.bio ?? null, data.avatarPath ?? null, data.coverPath ?? null]
     );
     return result.rows[0];
   },

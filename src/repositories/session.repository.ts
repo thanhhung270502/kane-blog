@@ -1,6 +1,7 @@
-import type { UserObject } from "@common";
+import type { EUserRole, UserObject } from "@common";
 
 import { query } from "@/libs/db";
+import { getDownloadUrl } from "@/libs/s3";
 
 export type SessionRow = {
   id: string;
@@ -26,14 +27,31 @@ export const SessionRepository = {
    * Find a valid (non-expired) session by its token, joining with the user.
    */
   async findValidSessionWithUser(token: string): Promise<UserObject | null> {
-    const result = await query<UserObject>(
-      `SELECT u.id, u.email, u.name, u.role, u.phone, u.avatar_url
+    const result = await query<{
+      id: string;
+      email: string;
+      name: string;
+      role: string;
+      phone: string | null;
+      avatar_path: string | null;
+    }>(
+      `SELECT u.id, u.email, u.name, u.role, u.phone, u.avatar_path
        FROM user_sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token = $1 AND s.expires_at > NOW() AND u.deleted_at IS NULL`,
       [token]
     );
-    return result.rows[0] ?? null;
+    const row = result.rows[0];
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      email: row.email,
+      name: row.name,
+      role: row.role as EUserRole,
+      phone: row.phone,
+      avatarUrl: row.avatar_path ? await getDownloadUrl(row.avatar_path) : null,
+    };
   },
 
   /**

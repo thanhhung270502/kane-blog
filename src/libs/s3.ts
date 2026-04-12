@@ -6,6 +6,13 @@ const PRESIGNED_URL_EXPIRES_SECONDS = 3600; // 1 hour
 export const ALLOWED_IMAGE_TYPES = ["jpg", "jpeg", "png", "webp", "gif"] as const;
 export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
 
+/** MIME type for S3 PutObject / browser upload; must match `file.type` from the client. */
+export function mimeTypeForImageExt(ext: string): string {
+  const e = ext.toLowerCase();
+  if (e === "jpg" || e === "jpeg") return "image/jpeg";
+  return `image/${e}`;
+}
+
 /**
  * Lazily create an S3 client so env vars are not read at build time.
  */
@@ -55,11 +62,41 @@ export function buildTemplateImagePath(
 }
 
 /**
- * Generate a presigned PUT URL so the client can upload directly to S3.
+ * Build the S3 key for a user avatar.
+ * Format: users/{userId}/avatar/{imageId}.{ext}
  */
-export async function getUploadUrl(imagePath: string): Promise<string> {
+export function buildUserAvatarPath(userId: string, imageId: string, ext: string): string {
+  return `users/${userId}/avatar/${imageId}.${ext.toLowerCase()}`;
+}
+
+/**
+ * Build the S3 key for a user cover photo.
+ * Format: users/{userId}/cover/{imageId}.{ext}
+ */
+export function buildUserCoverPath(userId: string, imageId: string, ext: string): string {
+  return `users/${userId}/cover/${imageId}.${ext.toLowerCase()}`;
+}
+
+/**
+ * Build the S3 key for a post attachment.
+ * Format: posts/{postId}/attachments/{imageId}.{ext}
+ */
+export function buildPostAttachmentPath(postId: string, imageId: string, ext: string): string {
+  return `posts/${postId}/attachments/${imageId}.${ext.toLowerCase()}`;
+}
+
+/**
+ * Generate a presigned PUT URL so the client can upload directly to S3.
+ * `contentType` must match the `Content-Type` header on the browser PUT (e.g. `file.type`);
+ * otherwise the signature is invalid and the request often surfaces as a CORS error in DevTools.
+ */
+export async function getUploadUrl(imagePath: string, contentType: string): Promise<string> {
   const client = getS3Client();
-  const command = new PutObjectCommand({ Bucket: getBucket(), Key: imagePath });
+  const command = new PutObjectCommand({
+    Bucket: getBucket(),
+    Key: imagePath,
+    ContentType: contentType,
+  });
   return getSignedUrl(client, command, { expiresIn: PRESIGNED_URL_EXPIRES_SECONDS });
 }
 

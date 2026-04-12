@@ -17,8 +17,15 @@ import type {
 } from "@common";
 import { EPostVisibility } from "@common";
 
+import { getDownloadUrl } from "@/libs/s3";
 import { PostRepository } from "@/repositories/post.repository";
 import { UserRepository } from "@/repositories/user.repository";
+
+/** Resolve an S3 path to a presigned download URL. Returns null if path is null/empty. */
+async function resolveImageUrl(path: string | null | undefined): Promise<string | null> {
+  if (!path) return null;
+  return getDownloadUrl(path);
+}
 
 // ─── Internal Helpers ─────────────────────────────────────────────────────────
 
@@ -32,7 +39,7 @@ async function buildAuthor(
   return {
     id: userId,
     name: user?.name ?? "Unknown",
-    avatarUrl: profile?.avatar_url ?? null,
+    avatarUrl: await resolveImageUrl(profile?.avatar_path),
     username: profile?.username ?? null,
   };
 }
@@ -114,7 +121,7 @@ async function buildPostObjects(rows: PostRow[], viewerId: string): Promise<Post
       const author: PostAuthorObject = {
         id: row.author_id,
         name: await UserRepository.findById(row.author_id).then((u) => u?.name ?? "Unknown"),
-        avatarUrl: profile?.avatar_url ?? null,
+        avatarUrl: await resolveImageUrl(profile?.avatar_path),
         username: profile?.username ?? null,
       };
 
@@ -289,28 +296,36 @@ export const PostService = {
     const profile = await PostRepository.findProfile(targetUserId);
     const user = await UserRepository.findById(targetUserId);
 
+    if (profile) {
+      const [avatarUrl, coverUrl] = await Promise.all([
+        resolveImageUrl(profile.avatar_path ?? user?.avatar_path),
+        resolveImageUrl(profile.cover_path),
+      ]);
+      return {
+        profile: {
+          id: profile.id,
+          userId: profile.user_id,
+          username: profile.username,
+          bio: profile.bio,
+          avatarUrl,
+          coverUrl,
+          name: user?.name ?? "",
+          createdAt: profile.created_at,
+        },
+      };
+    }
+
     return {
-      profile: profile
-        ? {
-            id: profile.id,
-            userId: profile.user_id,
-            username: profile.username,
-            bio: profile.bio,
-            avatarUrl: profile.avatar_url ?? user?.avatar_url ?? null,
-            coverUrl: profile.cover_url,
-            name: user?.name ?? "",
-            createdAt: profile.created_at,
-          }
-        : {
-            id: "",
-            userId: targetUserId,
-            username: null,
-            bio: null,
-            avatarUrl: user?.avatar_url ?? null,
-            coverUrl: null,
-            name: user?.name ?? "",
-            createdAt: new Date().toISOString(),
-          },
+      profile: {
+        id: "",
+        userId: targetUserId,
+        username: null,
+        bio: null,
+        avatarUrl: await resolveImageUrl(user?.avatar_path),
+        coverUrl: null,
+        name: user?.name ?? "",
+        createdAt: new Date().toISOString(),
+      },
     };
   },
 
@@ -342,18 +357,23 @@ export const PostService = {
    */
   async upsertProfile(
     userId: string,
-    data: { username?: string; bio?: string; avatarUrl?: string; coverUrl?: string }
+    data: { username?: string; bio?: string; avatarPath?: string; coverPath?: string }
   ): Promise<UpsertProfileResponse> {
     const row = await PostRepository.upsertProfile(userId, data);
     const user = await UserRepository.findById(userId);
+
+    const [avatarUrl, coverUrl] = await Promise.all([
+      resolveImageUrl(row.avatar_path),
+      resolveImageUrl(row.cover_path),
+    ]);
 
     const profile = {
       id: row.id,
       userId: row.user_id,
       username: row.username,
       bio: row.bio,
-      avatarUrl: row.avatar_url,
-      coverUrl: row.cover_url,
+      avatarUrl,
+      coverUrl,
       name: user?.name ?? "",
       createdAt: row.created_at,
     };

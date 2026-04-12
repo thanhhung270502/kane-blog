@@ -8,9 +8,15 @@ import type {
   SendFriendRequestResponse,
 } from "@common";
 
+import { getDownloadUrl } from "@/libs/s3";
 import { FriendshipRepository } from "@/repositories/friendship.repository";
 import { PostRepository } from "@/repositories/post.repository";
 import { UserRepository } from "@/repositories/user.repository";
+
+async function resolveAvatarUrl(path: string | null | undefined): Promise<string | null> {
+  if (!path) return null;
+  return getDownloadUrl(path);
+}
 
 async function buildFriendshipObject(
   row: {
@@ -20,7 +26,7 @@ async function buildFriendshipObject(
     status: string;
     created_at: string;
   },
-  profilesMap: Map<string, { avatar_url: string | null; username: string | null }>
+  profilesMap: Map<string, { avatar_path: string | null; username: string | null }>
 ): Promise<FriendshipObject> {
   const requester = await UserRepository.findById(row.requester_id);
   const profile = profilesMap.get(row.requester_id);
@@ -28,7 +34,7 @@ async function buildFriendshipObject(
   const requesterObj: PostAuthorObject = {
     id: row.requester_id,
     name: requester?.name ?? "Unknown",
-    avatarUrl: profile?.avatar_url ?? null,
+    avatarUrl: await resolveAvatarUrl(profile?.avatar_path),
     username: profile?.username ?? null,
   };
 
@@ -62,7 +68,7 @@ export const FriendshipService = {
     const row = await FriendshipRepository.create(requesterId, addresseeId);
     const profiles = await PostRepository.findProfilesByUserIds([requesterId]);
     const profilesMap = new Map(
-      profiles.map((p) => [p.user_id, { avatar_url: p.avatar_url, username: p.username }])
+      profiles.map((p) => [p.user_id, { avatar_path: p.avatar_path, username: p.username }])
     );
 
     const friendship = await buildFriendshipObject(row, profilesMap);
@@ -96,7 +102,7 @@ export const FriendshipService = {
 
     const profiles = await PostRepository.findProfilesByUserIds([updated.requester_id]);
     const profilesMap = new Map(
-      profiles.map((p) => [p.user_id, { avatar_url: p.avatar_url, username: p.username }])
+      profiles.map((p) => [p.user_id, { avatar_path: p.avatar_path, username: p.username }])
     );
 
     const friendship = await buildFriendshipObject(updated, profilesMap);
@@ -111,7 +117,7 @@ export const FriendshipService = {
     const requesterIds = rows.map((r) => r.requester_id);
     const profiles = await PostRepository.findProfilesByUserIds(requesterIds);
     const profilesMap = new Map(
-      profiles.map((p) => [p.user_id, { avatar_url: p.avatar_url, username: p.username }])
+      profiles.map((p) => [p.user_id, { avatar_path: p.avatar_path, username: p.username }])
     );
 
     const friendships = await Promise.all(
@@ -130,14 +136,16 @@ export const FriendshipService = {
     const profiles = await PostRepository.findProfilesByUserIds(friendIds);
     const profilesMap = new Map(profiles.map((p) => [p.user_id, p]));
 
-    const friends: PostAuthorObject[] = users
-      .filter((u) => u !== null)
-      .map((u) => ({
-        id: u!.id,
-        name: u!.name,
-        avatarUrl: profilesMap.get(u!.id)?.avatar_url ?? null,
-        username: profilesMap.get(u!.id)?.username ?? null,
-      }));
+    const friends: PostAuthorObject[] = await Promise.all(
+      users
+        .filter((u) => u !== null)
+        .map(async (u) => ({
+          id: u!.id,
+          name: u!.name,
+          avatarUrl: await resolveAvatarUrl(profilesMap.get(u!.id)?.avatar_path),
+          username: profilesMap.get(u!.id)?.username ?? null,
+        }))
+    );
 
     return { friends };
   },

@@ -79,21 +79,17 @@ export const AuthService = {
       const existingByEmail = await UserRepository.findByEmail(profile.email);
 
       if (existingByEmail) {
-        await UserRepository.linkGoogleSub(existingByEmail.id, profile.sub, profile.picture);
+        await UserRepository.linkGoogleSub(existingByEmail.id, profile.sub);
         user = { ...existingByEmail, google_sub: profile.sub };
       } else {
         // 3. Create brand-new Google-only account
         const created = await UserRepository.createGoogleUser(
           profile.email,
           profile.name,
-          profile.sub,
-          profile.picture
+          profile.sub
         );
-        user = { ...created, password_hash: null, google_sub: profile.sub };
+        user = { ...created, password_hash: null, google_sub: profile.sub, avatar_path: null };
       }
-    } else if (profile.picture && !user.avatar_url) {
-      // Update avatar if not yet set (e.g. existing user before this feature)
-      await UserRepository.updateAvatarUrl(user.id, profile.picture);
     }
 
     return this.createSession(user.id);

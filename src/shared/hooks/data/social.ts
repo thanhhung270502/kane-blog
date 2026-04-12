@@ -33,6 +33,7 @@ import {
   sendFriendRequest,
   sharePost,
   toggleReaction,
+  uploadProfileImage,
   upsertProfile,
 } from "@/shared/apis";
 
@@ -235,6 +236,34 @@ export const useQueryUserPosts = (userId: string, props: QueryProps<GetUserPosts
     queryKey: SOCIAL_KEYS.userPosts(userId),
     queryFn: () => getUserPosts(userId),
     enabled: !!userId,
+    ...props,
+  });
+};
+
+// ─── Profile image uploads ─────────────────────────────────────────────────────
+
+export const useUploadAvatarMutation = (props: MutationProps<void, File> = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => uploadProfileImage("avatar", file),
+    onSuccess: async () => {
+      toast.success("Avatar updated");
+      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.myProfile() });
+    },
+    onError: (error) => toast.error(asError(error).message),
+    ...props,
+  });
+};
+
+export const useUploadCoverMutation = (props: MutationProps<void, File> = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => uploadProfileImage("cover", file),
+    onSuccess: async () => {
+      toast.success("Cover photo updated");
+      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.myProfile() });
+    },
+    onError: (error) => toast.error(asError(error).message),
     ...props,
   });
 };

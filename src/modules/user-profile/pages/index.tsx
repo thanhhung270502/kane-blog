@@ -9,6 +9,8 @@ import {
   useQueryUserProfile,
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
+  useUploadAvatarMutation,
+  useUploadCoverMutation,
 } from "@/shared/hooks";
 
 import { ProfileHeader, ProfileInfoSidebar, ProfilePosts } from "../components";
@@ -28,6 +30,8 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
 
   const { mutate: sendFriendRequest, isPending: isSendPending } = useSendFriendRequestMutation();
   const { mutate: removeFriend, isPending: isRemovePending } = useRemoveFriendMutation();
+  const { mutate: uploadAvatar, isPending: isAvatarUploading } = useUploadAvatarMutation();
+  const { mutate: uploadCover, isPending: isCoverUploading } = useUploadCoverMutation();
 
   const profile = profileData?.profile;
   const friendshipStatus = profileData?.friendshipStatus ?? null;
@@ -82,6 +86,10 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
         onRemoveFriend={handleRemoveFriend}
         onEditProfile={() => {}}
         isFriendPending={isSendPending || isRemovePending}
+        onAvatarUpload={uploadAvatar}
+        onCoverUpload={uploadCover}
+        isAvatarUploading={isAvatarUploading}
+        isCoverUploading={isCoverUploading}
       />
 
       {/* Two-column layout */}

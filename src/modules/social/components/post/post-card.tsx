@@ -28,13 +28,13 @@ export const PostCard = ({
   isSharedEmbed = false,
 }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
-  const { mutate: toggleReaction, isPending: isLiking } = useToggleReactionMutation(post.id);
+  const { mutate: toggleReaction, isPending: isLiking } = useToggleReactionMutation();
   const { mutate: sharePost, isPending: isSharing } = useSharePostMutation();
   const { mutate: deletePost } = useDeletePostMutation();
 
   const isOwner = post.author.id === currentUser.id;
 
-  const handleLike = () => toggleReaction({});
+  const handleLike = () => toggleReaction({ postId: post.id });
   const handleShare = () => sharePost({ postId: post.id });
   const handleDelete = () => {
     if (confirm("Delete this post?")) deletePost(post.id);

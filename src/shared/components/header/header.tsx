@@ -52,7 +52,7 @@ export const Header = () => {
         {/* Actions */}
         <div className="flex w-1/3 items-center justify-end gap-8">
           <Link href="/login">
-            <UserAvatar name={user?.name} avatarUrl={user?.avatar_url ?? undefined} />
+            <UserAvatar name={user?.name} avatarUrl={user?.avatarUrl ?? undefined} />
           </Link>
         </div>
       </div>

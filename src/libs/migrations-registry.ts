@@ -427,4 +427,55 @@ export const migrations: { name: string; sql: string }[] = [
       ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
     `,
   },
+
+  // ── users: rename avatar_url → avatar_path ────────────────────────────────
+  {
+    name: "034_rename_users_avatar_url_to_avatar_path",
+    sql: `
+      DO $body$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'avatar_url'
+        ) THEN
+          ALTER TABLE users RENAME COLUMN avatar_url TO avatar_path;
+        END IF;
+      END;
+      $body$;
+    `,
+  },
+
+  // ── user_profiles: rename avatar_url → avatar_path ───────────────────────
+  {
+    name: "035_rename_user_profiles_avatar_url_to_avatar_path",
+    sql: `
+      DO $body$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'user_profiles' AND column_name = 'avatar_url'
+        ) THEN
+          ALTER TABLE user_profiles RENAME COLUMN avatar_url TO avatar_path;
+        END IF;
+      END;
+      $body$;
+    `,
+  },
+
+  // ── user_profiles: rename cover_url → cover_path ─────────────────────────
+  {
+    name: "036_rename_user_profiles_cover_url_to_cover_path",
+    sql: `
+      DO $body$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'user_profiles' AND column_name = 'cover_url'
+        ) THEN
+          ALTER TABLE user_profiles RENAME COLUMN cover_url TO cover_path;
+        END IF;
+      END;
+      $body$;
+    `,
+  },
 ];

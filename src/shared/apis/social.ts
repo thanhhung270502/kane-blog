@@ -146,3 +146,36 @@ export const getUserPosts = async (
     params: { ...(cursor ? { cursor } : {}), limit },
   });
 };
+
+/**
+ * Upload a profile image (avatar or cover) to S3 and update the user profile.
+ * Flow: get presigned PUT URL → upload file to S3 → upsert profile with the image path.
+ */
+export const uploadProfileImage = async (
+  kind: "avatar" | "cover",
+  file: File
+): Promise<void> => {
+  const ext = file.type.replace("image/", "");
+
+  // 1. Get presigned upload URL from our API
+  const { uploadUrl, imagePath } = await (async () => {
+    const res = await postRequest({
+      path: "/api/social/upload-url",
+      data: { kind, imageType: ext },
+    });
+    return res.data as { uploadUrl: string; imagePath: string };
+  })();
+
+  // 2. PUT the file directly to S3
+  const s3Response = await fetch(uploadUrl, {
+    method: "PUT",
+    body: file,
+    headers: { "Content-Type": file.type },
+  });
+  if (!s3Response.ok) {
+    throw new Error("Failed to upload image to storage");
+  }
+
+  // 3. Persist the path on the profile
+  await upsertProfile(kind === "avatar" ? { avatarPath: imagePath } : { coverPath: imagePath });
+};

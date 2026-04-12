@@ -6,10 +6,10 @@ export AWS_ACCESS_KEY_ID="test"
 export AWS_SECRET_ACCESS_KEY="test"
 set -euo pipefail
 
-buckets=("sweetpix-local")
+buckets=("kane-blog-local")
 
 # Endpoint URL for LocalStack
-endpoint_url="http://localhost:4566"
+endpoint_url="http://localhost:4599"
 
 for bucket_name in "${buckets[@]}"; do
     awslocal --endpoint-url="$endpoint_url" s3api create-bucket --bucket "$bucket_name"

@@ -28,8 +28,8 @@ export interface UserProfileRow {
   user_id: string;
   username: string | null;
   bio: string | null;
-  avatar_url: string | null;
-  cover_url: string | null;
+  avatar_path: string | null;
+  cover_path: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -242,8 +242,8 @@ export interface GetProfileResponse {
 export interface UpsertProfileRequest {
   username?: string;
   bio?: string;
-  avatarUrl?: string;
-  coverUrl?: string;
+  avatarPath?: string;
+  coverPath?: string;
 }
 
 export interface UpsertProfileResponse {

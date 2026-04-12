@@ -1,7 +1,8 @@
 "use client";
 
 import type { EFriendshipStatus, UserObject, UserProfileObject } from "@common";
-import { Camera, PencilSimple, UserMinus, UserPlus } from "@phosphor-icons/react";
+import { Camera, CircleNotch, PencilSimple, UserMinus, UserPlus } from "@phosphor-icons/react";
+import { useRef } from "react";
 
 import { Button, Typography } from "@/shared/components";
 
@@ -40,6 +41,10 @@ interface ProfileHeaderProps {
   onRemoveFriend: () => void;
   onEditProfile: () => void;
   isFriendPending: boolean;
+  onAvatarUpload?: (file: File) => void;
+  onCoverUpload?: (file: File) => void;
+  isAvatarUploading?: boolean;
+  isCoverUploading?: boolean;
 }
 
 export const ProfileHeader = ({
@@ -52,9 +57,26 @@ export const ProfileHeader = ({
   onRemoveFriend,
   onEditProfile,
   isFriendPending,
+  onAvatarUpload,
+  onCoverUpload,
+  isAvatarUploading = false,
+  isCoverUploading = false,
 }: ProfileHeaderProps) => {
   const isFriend = friendshipStatus === "accepted";
   const isPending = friendshipStatus === "pending";
+
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange =
+    (handler?: (file: File) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && handler) {
+        handler(file);
+      }
+      // Reset so the same file can be re-selected
+      e.target.value = "";
+    };
 
   return (
     <div className="bg-black-secondary rounded-xl shadow-md">
@@ -63,11 +85,29 @@ export const ProfileHeader = ({
         {profile.coverUrl ? (
           <img src={profile.coverUrl} alt="Cover" className="h-full w-full object-cover" />
         ) : null}
+
         {isOwnProfile && (
-          <button className="absolute right-3 bottom-3 flex items-center gap-2 rounded-lg bg-black/60 px-3 py-1.5 text-white transition hover:bg-black/80">
-            <Camera size={16} />
-            <span className="text-sm">Edit cover photo</span>
-          </button>
+          <>
+            <input
+              ref={coverInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              onChange={handleFileChange(onCoverUpload)}
+            />
+            <button
+              className="absolute right-3 bottom-3 flex items-center gap-2 rounded-lg bg-black/60 px-3 py-1.5 text-white transition hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => coverInputRef.current?.click()}
+              disabled={isCoverUploading}
+            >
+              {isCoverUploading ? (
+                <CircleNotch size={16} className="animate-spin" />
+              ) : (
+                <Camera size={16} />
+              )}
+              <span className="text-sm">{isCoverUploading ? "Uploading…" : "Edit cover photo"}</span>
+            </button>
+          </>
         )}
       </div>
 
@@ -83,9 +123,26 @@ export const ProfileHeader = ({
               />
             </div>
             {isOwnProfile && (
-              <button className="absolute right-0 bottom-0 flex h-8 w-8 items-center justify-center rounded-full bg-gray-600 text-white shadow hover:bg-gray-500">
-                <Camera size={14} />
-              </button>
+              <>
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={handleFileChange(onAvatarUpload)}
+                />
+                <button
+                  className="absolute right-0 bottom-0 flex h-8 w-8 items-center justify-center rounded-full bg-gray-600 text-white shadow hover:bg-gray-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => avatarInputRef.current?.click()}
+                  disabled={isAvatarUploading}
+                >
+                  {isAvatarUploading ? (
+                    <CircleNotch size={14} className="animate-spin" />
+                  ) : (
+                    <Camera size={14} />
+                  )}
+                </button>
+              </>
             )}
           </div>
 

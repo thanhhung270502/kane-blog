@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { UserObject } from "@common";
 
-import { Typography, UserAvatar } from "@/shared/components";
+import { UserAvatar } from "@/shared/components";
 
 import { PostComposerDialog } from "..";
 

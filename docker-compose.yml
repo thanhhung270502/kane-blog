@@ -9,9 +9,9 @@ services:
         networks:
             - data_net
         ports:
-            - "[::1]:4566:4566"
-            - "127.0.0.1:4566:4566" # LocalStack Gateway
-            - "127.0.0.1:4510-4559:4510-4559" # external services port range
+            - "[::1]:4599:4566"
+            - "127.0.0.1:4599:4566" # LocalStack Gateway
+            - "127.0.0.1:4710-4759:4710-4759" # external services port range
 
 volumes:
     cache:
