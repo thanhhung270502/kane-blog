@@ -2,7 +2,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { MainPage } from "@/modules/main";
-import { AuthService } from "@/services/auth.service";
 import { CookieKeys } from "@/shared";
 
 export default async function Page() {
@@ -13,10 +12,5 @@ export default async function Page() {
     redirect("/login");
   }
 
-  const user = await AuthService.getMe(sessionToken);
-  if (!user) {
-    redirect("/login");
-  }
-
-  return <MainPage currentUser={user} />;
+  return <MainPage />;
 }

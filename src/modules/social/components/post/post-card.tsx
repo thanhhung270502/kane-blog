@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { PostObject, UserObject } from "@common";
+import { type CurrentUserObject, EReactionType, type PostObject } from "@common";
 import { ChatCircle, HeartIcon, Share, Trash } from "@phosphor-icons/react";
 import { cn } from "@tailwind-config/utils/cn";
 
@@ -16,25 +16,19 @@ import { CommentList } from "..";
 
 interface PostCardProps {
   post: PostObject;
-  currentUser: UserObject;
-  currentUserAvatarUrl?: string | null;
+  currentUser: CurrentUserObject;
   isSharedEmbed?: boolean;
 }
 
-export const PostCard = ({
-  post,
-  currentUser,
-  currentUserAvatarUrl,
-  isSharedEmbed = false,
-}: PostCardProps) => {
+export const PostCard = ({ post, currentUser, isSharedEmbed = false }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
-  const { mutate: toggleReaction, isPending: isLiking } = useToggleReactionMutation();
+  const { mutate: toggleReaction } = useToggleReactionMutation();
   const { mutate: sharePost, isPending: isSharing } = useSharePostMutation();
   const { mutate: deletePost } = useDeletePostMutation();
 
   const isOwner = post.author.id === currentUser.id;
 
-  const handleLike = () => toggleReaction({ postId: post.id });
+  const handleLike = () => toggleReaction({ postId: post.id, type: EReactionType.LIKE });
   const handleShare = () => sharePost({ postId: post.id });
   const handleDelete = () => {
     if (confirm("Delete this post?")) deletePost(post.id);
@@ -100,12 +94,7 @@ export const PostCard = ({
       {/* Shared post embed */}
       {post.sharedPost && !isSharedEmbed && (
         <div className="px-4 py-2">
-          <PostCard
-            post={post.sharedPost}
-            currentUser={currentUser}
-            currentUserAvatarUrl={currentUserAvatarUrl}
-            isSharedEmbed
-          />
+          <PostCard post={post.sharedPost} currentUser={currentUser} isSharedEmbed />
         </div>
       )}
 
@@ -131,7 +120,6 @@ export const PostCard = ({
               variant={post.viewerHasLiked ? "no-outlined-brand-secondary" : "no-outlined-primary"}
               startIcon={post.viewerHasLiked ? <HeartIcon weight="fill" /> : <HeartIcon />}
               onClick={handleLike}
-              disabled={isLiking}
               type="button"
               fullWidth
             >
@@ -150,7 +138,7 @@ export const PostCard = ({
               variant="no-outlined-primary"
               startIcon={Share}
               onClick={handleShare}
-              disabled={isSharing}
+              loading={isSharing}
               type="button"
               fullWidth
             >
@@ -161,12 +149,7 @@ export const PostCard = ({
           {/* Comments section */}
           {showComments && (
             <div className="px-4 pb-4">
-              <CommentList
-                postId={post.id}
-                currentUserId={currentUser.id}
-                currentUserAvatarUrl={currentUserAvatarUrl}
-                currentUserName={currentUser.name}
-              />
+              <CommentList postId={post.id} currentUser={currentUser} />
             </div>
           )}
         </>

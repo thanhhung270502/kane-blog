@@ -2,6 +2,7 @@
 
 import type {
   CreateCommentRequest,
+  CreateCommentResponse,
   CreatePostRequest,
   GetCommentsResponse,
   GetFeedResponse,
@@ -85,6 +86,24 @@ export const useToggleReactionMutation = (props: ToggleReactionMutationProps = {
   return useMutation({
     mutationFn: ({ postId, type }: ToggleReactionRequest & { postId: string }) =>
       toggleReaction(postId, { type }),
+    onMutate: async ({ postId }) => {
+      await queryClient.cancelQueries({ queryKey: SOCIAL_KEYS.feed() });
+      const previousData = queryClient.getQueryData(SOCIAL_KEYS.feed()) as GetFeedResponse;
+      queryClient.setQueryData(SOCIAL_KEYS.feed(), (old: GetFeedResponse) => {
+        const posts = old.posts.map((post) => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              viewerHasLiked: !post.viewerHasLiked,
+              reactionsCount: post.reactionsCount + (post.viewerHasLiked ? -1 : 1),
+            };
+          }
+          return post;
+        });
+        return { ...old, posts };
+      });
+      return { previousData };
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.feed() });
     },
@@ -109,25 +128,53 @@ export const useSharePostMutation = (
 };
 
 // ─── Comments ─────────────────────────────────────────────────────────────────
-
-export const useQueryComments = (postId: string, props: QueryProps<GetCommentsResponse> = {}) => {
+type QueryCommentsInput = {
+  postId: string;
+};
+export const useQueryComments = (props: QueryProps<GetCommentsResponse, QueryCommentsInput>) => {
   return useQuery({
-    queryKey: SOCIAL_KEYS.comments(postId),
-    queryFn: () => getComments(postId),
+    queryKey: SOCIAL_KEYS.comments(props.input.postId),
+    queryFn: () => getComments(props.input.postId),
     ...props,
   });
 };
 
-export const useCreateCommentMutation = (
-  postId: string,
-  props: MutationProps<unknown, CreateCommentRequest> = {}
-) => {
+type CreateCommentMutationInput = {
+  postId: string;
+  body: CreateCommentRequest;
+};
+type CreateCommentMutationProps = MutationProps<CreateCommentResponse, CreateCommentMutationInput>;
+export const useCreateCommentMutation = (props: CreateCommentMutationProps = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateCommentRequest) => createComment(postId, data),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.comments(postId) });
-      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.feed() });
+    mutationFn: ({ postId, body }: CreateCommentMutationInput) => createComment(postId, body),
+    onMutate: async (data) => {
+      await queryClient.cancelQueries({ queryKey: SOCIAL_KEYS.comments(data.postId) });
+      const previousData = queryClient.getQueryData(
+        SOCIAL_KEYS.comments(data.postId)
+      ) as GetCommentsResponse;
+      queryClient.setQueryData(SOCIAL_KEYS.comments(data.postId), (old: GetCommentsResponse) => {
+        return {
+          ...old,
+          comments: [
+            ...old.comments,
+            {
+              id: crypto.randomUUID(),
+              postId: data.postId,
+              author: data.body.author,
+              body: data.body.body,
+              parentId: data.body.parentId,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          ],
+        };
+      });
+      return { previousData };
+    },
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.comments(variables.postId) });
+      // await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.feed() });
     },
     onError: (error) => toast.error(asError(error).message),
     ...props,

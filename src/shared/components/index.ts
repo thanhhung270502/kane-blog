@@ -29,8 +29,10 @@ export * from "./user-avatar";
 export * from "./youtube-embed";
 
 // Header
+export * from "./header/account-button";
 export * from "./header/header";
 export * from "./header/header-menu";
+export * from "./header/mega-menu-row";
 
 // React Hook Form
 export * from "./react-hook-form/RHFCheckbox";

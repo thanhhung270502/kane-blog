@@ -27,6 +27,31 @@ export const UserRepository = {
   },
 
   /**
+   * Public user row for profile APIs (no email or auth secrets).
+   */
+  async findPublicById(
+    userId: string
+  ): Promise<{
+    id: string;
+    name: string;
+    role: string;
+    avatar_path: string | null;
+    created_at: string;
+  } | null> {
+    const result = await query<{
+      id: string;
+      name: string;
+      role: string;
+      avatar_path: string | null;
+      created_at: string;
+    }>(
+      `SELECT id, name, role, avatar_path, created_at FROM users WHERE id = $1 AND deleted_at IS NULL`,
+      [userId]
+    );
+    return result.rows[0] ?? null;
+  },
+
+  /**
    * Find a user by their Google OAuth subject ID.
    */
   async findByGoogleSub(googleSub: string): Promise<UserRow | null> {

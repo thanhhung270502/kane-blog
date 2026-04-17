@@ -1,9 +1,9 @@
-import type { UserObject } from "@common";
+import type { CurrentUserObject } from "@common";
 
 import { Typography, UserAvatar } from "@/shared";
 
 type SocialLeftSidebarProps = {
-  currentUser: UserObject;
+  currentUser: CurrentUserObject;
 };
 
 export const SocialLeftSidebar = ({ currentUser }: SocialLeftSidebarProps) => {
@@ -11,7 +11,7 @@ export const SocialLeftSidebar = ({ currentUser }: SocialLeftSidebarProps) => {
     <aside className="hidden w-64 shrink-0 space-y-4 lg:block">
       <div className="bg-black-secondary rounded-xl p-4 shadow-md">
         <div className="flex items-center gap-3">
-          <UserAvatar name={currentUser.name} />
+          <UserAvatar name={currentUser.name} avatarUrl={currentUser.avatarUrl ?? undefined} />
           <div>
             <Typography variant="body-md" color="primary" weight="semibold">
               {currentUser.name}

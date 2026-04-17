@@ -193,6 +193,12 @@ const buttonVariants = cva(
           "active:bg-brand-secondary-alt",
           "disabled:text-brand-secondary-disabled",
         ],
+        "no-outlined-quaternary": [
+          "bg-transparent text-brand-quaternary border border-transparent font-semibold",
+          "hover:bg-brand-quaternary-alt",
+          "active:bg-brand-quaternary-alt",
+          "disabled:text-brand-quaternary-disabled",
+        ],
       },
       size: {
         xs: ["px-lg py-xs body-xs", "gap-xs"],

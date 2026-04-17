@@ -3,6 +3,7 @@ import type { APIDefinition } from "../api-route-model";
 import { APIMethod } from "../api-route-model";
 
 import type {
+  GetUserByIdResponse,
   LoginRequest,
   LoginResponse,
   LogoutResponse,
@@ -36,6 +37,14 @@ export const API_ME: APIDefinition = {
   subUrl: "/me",
   responseBody: {} as UserObject,
   buildUrlPath: () => `${APIBaseRoutes.AUTH}/me`,
+};
+
+export const API_GET_USER_BY_ID: APIDefinition<{ userId: string }> = {
+  method: APIMethod.GET,
+  baseUrl: APIBaseRoutes.USERS,
+  subUrl: "/:userId",
+  responseBody: {} as GetUserByIdResponse,
+  buildUrlPath: ({ userId }) => `${APIBaseRoutes.USERS}/${userId}`,
 };
 
 export const API_LOGOUT: APIDefinition = {

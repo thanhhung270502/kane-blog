@@ -1,6 +1,7 @@
 export const APIBaseRoutes = {
   // ------ Public Routes ------
   AUTH: "/api/auth",
+  USERS: "/api/users",
 
   // ------ Private Routes ------
   ORDER: "/api/orders",

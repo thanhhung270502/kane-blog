@@ -39,7 +39,7 @@ export const Loading = ({
 }: LoadingProps) => {
   const renderIcon = createElement(CircleNotchIcon, {
     size: ICON_SIZE[size],
-    className: cn("animate-spin text-black", iconClassName),
+    className: cn("animate-spin text-white-primary", iconClassName),
     "aria-hidden": "true", // Icons are decorative when there's text
   });
   return (
@@ -49,7 +49,7 @@ export const Loading = ({
         <Typography
           variant={TEXT_SIZE[size]}
           weight="medium"
-          className={cn("animate-bounce text-black", textClassName)}
+          className={cn("text-white-primary animate-bounce", textClassName)}
         >
           {text}
         </Typography>

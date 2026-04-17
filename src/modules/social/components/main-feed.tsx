@@ -1,4 +1,4 @@
-import type { PostObject, UserObject } from "@common";
+import type { CurrentUserObject, PostObject } from "@common";
 
 import { Skeleton, Typography } from "@/shared";
 
@@ -6,12 +6,11 @@ import { PostCard } from ".";
 
 type MainFeedProps = {
   posts: PostObject[];
-  currentUser: UserObject;
-  avatarUrl: string | null;
+  currentUser: CurrentUserObject;
   isLoading: boolean;
 };
 
-export const MainFeed = ({ posts, currentUser, avatarUrl, isLoading }: MainFeedProps) => {
+export const MainFeed = ({ posts, currentUser, isLoading }: MainFeedProps) => {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -32,8 +31,8 @@ export const MainFeed = ({ posts, currentUser, avatarUrl, isLoading }: MainFeedP
   }
   if (posts.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-        <Typography variant="heading-sm" color="primary" weight="semibold">
+      <div className="bg-black-secondary rounded-xl p-8 text-center shadow-sm">
+        <Typography variant="body-xl" color="primary" weight="semibold">
           Your feed is empty
         </Typography>
         <Typography variant="body-md" color="secondary" weight="regular">
@@ -42,12 +41,5 @@ export const MainFeed = ({ posts, currentUser, avatarUrl, isLoading }: MainFeedP
       </div>
     );
   }
-  return posts.map((post) => (
-    <PostCard
-      key={post.id}
-      post={post}
-      currentUser={currentUser}
-      currentUserAvatarUrl={avatarUrl}
-    />
-  ));
+  return posts.map((post) => <PostCard key={post.id} post={post} currentUser={currentUser} />);
 };

@@ -1,47 +1,58 @@
 "use client";
 
 import { useState } from "react";
-import type { GetCommentsResponse } from "@common";
+import type { CurrentUserObject, GetCommentsResponse } from "@common";
 import { PaperPlaneRightIcon, SmileyIcon } from "@phosphor-icons/react";
 import { cn } from "@tailwind-config/utils/cn";
 
+import { logger } from "@/libs/logger";
 import { Button, Skeleton, Textarea, Typography, UserAvatar } from "@/shared/components";
 import { useCreateCommentMutation, useQueryComments } from "@/shared/hooks";
 
 interface CommentListProps {
   postId: string;
-  currentUserId: string;
-  currentUserAvatarUrl?: string | null;
-  currentUserName: string;
+  currentUser: CurrentUserObject;
 }
 
-export const CommentList = ({
-  postId,
-  currentUserAvatarUrl,
-  currentUserName,
-}: CommentListProps) => {
+export const CommentList = ({ postId, currentUser }: CommentListProps) => {
   const [commentBody, setCommentBody] = useState("");
-  const { data, isLoading } = useQueryComments(postId);
-  const { mutate: createComment, isPending } = useCreateCommentMutation(postId);
+  const { data, isLoading } = useQueryComments({ input: { postId } });
+  const { mutateAsync: createComment, isPending } = useCreateCommentMutation();
 
   const commentsData = data as GetCommentsResponse | undefined;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!commentBody.trim()) return;
-    createComment({ body: commentBody.trim() }, { onSuccess: () => setCommentBody("") });
+    try {
+      await createComment({
+        postId,
+        body: {
+          body: commentBody.trim(),
+          author: {
+            id: currentUser.id,
+            name: currentUser.name,
+            avatarUrl: currentUser.avatarUrl ?? null,
+            username: null,
+          },
+        },
+      });
+      setCommentBody("");
+    } catch (error) {
+      logger.error("Failed to create comment", { error });
+    }
   };
 
   return (
-    <div className="border-black-quaternary mt-2 border-t pt-3">
+    <div className="border-black-quaternary mt-2 border-t">
       {/* Comments */}
-      <div className="py-xl space-y-2">
+      <div className="py-2xl space-y-2">
         {isLoading ? (
           <>
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-3/4" />
           </>
         ) : commentsData?.comments.length === 0 ? (
-          <Typography variant="body-sm" className="text-center text-gray-400">
+          <Typography variant="body-sm" color="secondary" className="text-center">
             No comments yet. Be the first!
           </Typography>
         ) : (
@@ -71,8 +82,8 @@ export const CommentList = ({
       {/* Comment input */}
       <div className="flex gap-2">
         <UserAvatar
-          name={currentUserName}
-          avatarUrl={currentUserAvatarUrl ?? undefined}
+          name={currentUser.name}
+          avatarUrl={currentUser.avatarUrl ?? undefined}
           size="sm"
         />
         <div className="flex flex-1 items-end gap-2">

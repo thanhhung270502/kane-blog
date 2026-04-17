@@ -1,13 +1,13 @@
 import { BellIcon, Users } from "@phosphor-icons/react";
 
 import { Typography } from "@/shared";
+import { useQueryPendingRequests } from "@/shared/hooks";
 
-// import { useQueryPendingRequests } from "@/shared/hooks";
 import { FriendRequestsPanel, FriendsList } from ".";
 
 export const SocialRightSidebar = () => {
-  // const { data: pendingData } = useQueryPendingRequests();
-  const pendingData = { friendships: [] };
+  const { data: pendingData } = useQueryPendingRequests();
+  // const pendingData = { friendships: [] };
   const pendingCount =
     (pendingData as { friendships?: unknown[] } | undefined)?.friendships?.length ?? 0;
   return (

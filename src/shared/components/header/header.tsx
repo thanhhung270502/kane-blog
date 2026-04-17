@@ -6,7 +6,7 @@ import { cn } from "@tailwind-config/utils/cn";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button, Input, useAuthRequest, useQueryMe, UserAvatar } from "@/shared";
+import { AccountButton, Button, Input, useAuthRequest, useQueryMe } from "@/shared";
 
 export const Header = () => {
   const { onOpenLogin } = useAuthRequest();
@@ -51,9 +51,7 @@ export const Header = () => {
 
         {/* Actions */}
         <div className="flex w-1/3 items-center justify-end gap-8">
-          <Link href="/login">
-            <UserAvatar name={user?.name} avatarUrl={user?.avatarUrl ?? undefined} />
-          </Link>
+          <AccountButton />
         </div>
       </div>
 
@@ -66,11 +64,12 @@ export const Header = () => {
       >
         <div className="flex flex-col gap-4 px-4 py-6">
           {isAuthenticated ? (
-            <Link href="/account" onClick={() => setMenuOpen(false)}>
-              <Button variant="outlined-primary" size="md" fullWidth>
-                My account
-              </Button>
-            </Link>
+            // <Link href="/account" onClick={() => setMenuOpen(false)}>
+            //   <Button variant="outlined-primary" size="md" fullWidth>
+            //     My account
+            //   </Button>
+            // </Link>
+            <AccountButton />
           ) : (
             <button
               onClick={() => {

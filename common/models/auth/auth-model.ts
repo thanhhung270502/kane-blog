@@ -1,3 +1,5 @@
+import type { UserProfileObject } from "../social/social-model";
+
 /**
  * Signup
  */
@@ -30,6 +32,36 @@ export interface UserObject {
   role: EUserRole;
   phone: string | null;
   avatarUrl: string | null;
+}
+
+/** Public user fields (no email); avatar from `users.avatar_path` via S3. */
+export interface PublicUserObject {
+  id: string;
+  name: string;
+  role: EUserRole;
+  avatarUrl: string | null;
+  createdAt: string;
+}
+
+/** GET /api/users/:userId */
+export interface GetUserByIdResponse {
+  user: PublicUserObject;
+  profile: UserProfileObject | null;
+}
+
+export interface CurrentUserObject {
+  id: string;
+  email: string;
+  name: string;
+  role: EUserRole;
+  bio?: string;
+  avatarUrl?: string;
+  coverUrl?: string;
+  createdAt: string;
+}
+export interface CurrentUserResponse {
+  isLoading: boolean;
+  user: CurrentUserObject | undefined;
 }
 
 export interface SessionObject {

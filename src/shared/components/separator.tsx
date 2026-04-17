@@ -4,7 +4,7 @@ import { Separator as BaseSeparator } from "@base-ui-components/react/separator"
 import { cn } from "@tailwind-config/utils/cn";
 import { cva } from "class-variance-authority";
 
-const separatorVariants = cva("bg-quaternary", {
+const separatorVariants = cva("bg-black-quaternary", {
   variants: {
     orientation: {
       horizontal: "h-px",

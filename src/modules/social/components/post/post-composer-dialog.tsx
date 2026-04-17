@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { UserObject } from "@common";
+import type { CurrentUserObject } from "@common";
 import { EPostVisibility } from "@common";
 import { Image, PaperPlaneRight, XIcon } from "@phosphor-icons/react";
 import { cn } from "@tailwind-config/utils/cn";
@@ -23,7 +23,7 @@ import { PostVisibilitySelector } from "..";
 import { PostAuthorAvatar } from "./post-author-avatar";
 
 interface PostComposerDialogProps {
-  currentUser: UserObject;
+  currentUser: CurrentUserObject;
   avatarUrl?: string | null;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -37,19 +37,14 @@ export const PostComposerDialog = ({
 }: PostComposerDialogProps) => {
   const [body, setBody] = useState("");
   const [visibility, setVisibility] = useState<EPostVisibility>(EPostVisibility.PUBLIC);
-  const { mutate: createPost, isPending } = useCreatePostMutation();
+  const { mutateAsync: createPost, isPending } = useCreatePostMutation();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!body.trim()) return;
-    createPost(
-      { body: body.trim(), visibility },
-      {
-        onSuccess: () => {
-          setBody("");
-          setVisibility(EPostVisibility.PUBLIC);
-        },
-      }
-    );
+    await createPost({ body: body.trim(), visibility });
+    setBody("");
+    setVisibility(EPostVisibility.PUBLIC);
+    setOpen(false);
   };
 
   const author = {

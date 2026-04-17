@@ -191,6 +191,7 @@ export interface ToggleReactionResponse {
 export interface CreateCommentRequest {
   body: string;
   parentId?: string | null;
+  author?: PostAuthorObject;
 }
 
 export interface CreateCommentResponse {
