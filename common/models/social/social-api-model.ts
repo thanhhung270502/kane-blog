@@ -12,6 +12,7 @@ import type {
   GetFriendsResponse,
   GetPendingFriendRequestsResponse,
   GetProfileResponse,
+  GetUserPostsResponse,
   RespondFriendRequestRequest,
   RespondFriendRequestResponse,
   SendFriendRequestRequest,
@@ -20,7 +21,6 @@ import type {
   ToggleReactionResponse,
   UpsertProfileRequest,
   UpsertProfileResponse,
-  GetUserPostsResponse,
 } from "./social-model";
 
 /** Feed */
@@ -42,39 +42,40 @@ export const API_CREATE_POST: APIDefinition = {
   buildUrlPath: () => `${APIBaseRoutes.SOCIAL}/posts`,
 };
 
-export const API_DELETE_POST: APIDefinition = {
+export const API_DELETE_POST: APIDefinition<{ id: string }> = {
   method: APIMethod.DELETE,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/posts/:id",
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/posts/${id}`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/posts/${id}`,
+  responseBody: {},
 };
 
 /** Reactions */
-export const API_TOGGLE_REACTION: APIDefinition = {
+export const API_TOGGLE_REACTION: APIDefinition<{ id: string }> = {
   method: APIMethod.POST,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/posts/:id/reactions",
   requestBody: {} as ToggleReactionRequest,
   responseBody: {} as ToggleReactionResponse,
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/posts/${id}/reactions`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/posts/${id}/reactions`,
 };
 
 /** Comments */
-export const API_GET_COMMENTS: APIDefinition = {
+export const API_GET_COMMENTS: APIDefinition<{ id: string }> = {
   method: APIMethod.GET,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/posts/:id/comments",
   responseBody: {} as GetCommentsResponse,
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/posts/${id}/comments`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/posts/${id}/comments`,
 };
 
-export const API_CREATE_COMMENT: APIDefinition = {
+export const API_CREATE_COMMENT: APIDefinition<{ id: string }> = {
   method: APIMethod.POST,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/posts/:id/comments",
   requestBody: {} as CreateCommentRequest,
   responseBody: {} as CreateCommentResponse,
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/posts/${id}/comments`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/posts/${id}/comments`,
 };
 
 /** Friendships */
@@ -103,29 +104,30 @@ export const API_GET_FRIENDS: APIDefinition = {
   buildUrlPath: () => `${APIBaseRoutes.SOCIAL}/friendships/friends`,
 };
 
-export const API_RESPOND_FRIEND_REQUEST: APIDefinition = {
+export const API_RESPOND_FRIEND_REQUEST: APIDefinition<{ id: string }> = {
   method: APIMethod.PATCH,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/friendships/:id",
   requestBody: {} as RespondFriendRequestRequest,
   responseBody: {} as RespondFriendRequestResponse,
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/friendships/${id}`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/friendships/${id}`,
 };
 
-export const API_REMOVE_FRIEND: APIDefinition = {
+export const API_REMOVE_FRIEND: APIDefinition<{ id: string }> = {
   method: APIMethod.DELETE,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/friendships/:id",
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/friendships/${id}`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/friendships/${id}`,
+  responseBody: {},
 };
 
 /** Profile */
-export const API_GET_PROFILE: APIDefinition = {
+export const API_GET_PROFILE: APIDefinition<{ id: string }> = {
   method: APIMethod.GET,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/users/:id/profile",
   responseBody: {} as GetProfileResponse,
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/users/${id}/profile`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/users/${id}/profile`,
 };
 
 export const API_UPSERT_PROFILE: APIDefinition = {
@@ -137,10 +139,10 @@ export const API_UPSERT_PROFILE: APIDefinition = {
   buildUrlPath: () => `${APIBaseRoutes.SOCIAL}/profile`,
 };
 
-export const API_GET_USER_POSTS: APIDefinition = {
+export const API_GET_USER_POSTS: APIDefinition<{ id: string }> = {
   method: APIMethod.GET,
   baseUrl: APIBaseRoutes.SOCIAL,
   subUrl: "/users/:id/posts",
   responseBody: {} as GetUserPostsResponse,
-  buildUrlPath: (id: string) => `${APIBaseRoutes.SOCIAL}/users/${id}/posts`,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/users/${id}/posts`,
 };

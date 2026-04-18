@@ -30,8 +30,11 @@ export interface UserObject {
   email: string;
   name: string;
   role: EUserRole;
-  phone: string | null;
-  avatarUrl: string | null;
+  phone?: string;
+  bio?: string;
+  avatarUrl?: string;
+  coverUrl?: string;
+  createdAt?: string;
 }
 
 /** Public user fields (no email); avatar from `users.avatar_path` via S3. */
@@ -57,7 +60,7 @@ export interface CurrentUserObject {
   bio?: string;
   avatarUrl?: string;
   coverUrl?: string;
-  createdAt: string;
+  createdAt?: string;
 }
 export interface CurrentUserResponse {
   isLoading: boolean;

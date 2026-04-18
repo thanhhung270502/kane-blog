@@ -1,10 +1,10 @@
 "use client";
 
+import { PostComposer } from "@/modules/social/components";
 import { Skeleton } from "@/shared/components";
 import {
+  useCurrentUser,
   useQueryFriends,
-  useQueryMe,
-  useQueryMyProfile,
   useQueryUserPosts,
   useQueryUserProfile,
   useRemoveFriendMutation,
@@ -20,11 +20,10 @@ interface UserProfilePageProps {
 }
 
 export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
-  const { data: currentUser } = useQueryMe();
-  const isOwnProfile = !!currentUser && userId === currentUser.id;
+  const currentUser = useCurrentUser();
+  const isOwnProfile = !!currentUser.user && userId === currentUser.user.id;
 
   const { data: profileData, isLoading: isProfileLoading } = useQueryUserProfile(userId);
-  const { data: myProfileData } = useQueryMyProfile();
   const { data: postsData, isLoading: isPostsLoading } = useQueryUserPosts(userId);
   const { data: friendsData } = useQueryFriends();
 
@@ -40,8 +39,6 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
   // Find the friendship id for removal
   const myFriends = (friendsData as { friends: { id: string }[] } | undefined)?.friends ?? [];
   const friendshipId = (profileData as { friendshipId?: string } | undefined)?.friendshipId ?? null;
-
-  const currentUserAvatarUrl = myProfileData?.profile?.avatarUrl ?? null;
 
   const handleAddFriend = () => {
     sendFriendRequest({ addresseeId: userId });
@@ -71,14 +68,14 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
     );
   }
 
-  if (!profile || !currentUser) return null;
+  if (!profile || !currentUser.user) return null;
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 px-4 py-6">
       {/* Profile header: cover + avatar + name + actions */}
       <ProfileHeader
         profile={profile}
-        currentUser={currentUser}
+        currentUser={currentUser.user}
         friendshipStatus={friendshipStatus}
         friendsCount={myFriends.length}
         isOwnProfile={isOwnProfile}
@@ -100,13 +97,10 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
         </div>
 
         {/* Right: posts */}
-        <div className="min-w-0 flex-1">
-          <ProfilePosts
-            posts={posts}
-            currentUser={currentUser}
-            currentUserAvatarUrl={currentUserAvatarUrl}
-            isLoading={isPostsLoading}
-          />
+        <div className="min-w-0 flex-1 space-y-4">
+          {isOwnProfile && currentUser.user && <PostComposer currentUser={currentUser.user} />}
+
+          <ProfilePosts posts={posts} currentUser={currentUser.user} isLoading={isPostsLoading} />
         </div>
       </div>
     </div>

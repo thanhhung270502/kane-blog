@@ -2,22 +2,16 @@
 
 import type { PostObject, UserObject } from "@common";
 
-import { Skeleton, Typography } from "@/shared/components";
 import { PostCard } from "@/modules/social/components";
+import { Skeleton, Typography } from "@/shared/components";
 
 interface ProfilePostsProps {
   posts: PostObject[];
   currentUser: UserObject;
-  currentUserAvatarUrl: string | null;
   isLoading: boolean;
 }
 
-export const ProfilePosts = ({
-  posts,
-  currentUser,
-  currentUserAvatarUrl,
-  isLoading,
-}: ProfilePostsProps) => {
+export const ProfilePosts = ({ posts, currentUser, isLoading }: ProfilePostsProps) => {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -53,12 +47,7 @@ export const ProfilePosts = ({
   return (
     <div className="space-y-4">
       {posts.map((post) => (
-        <PostCard
-          key={post.id}
-          post={post}
-          currentUser={currentUser}
-          currentUserAvatarUrl={currentUserAvatarUrl}
-        />
+        <PostCard key={post.id} post={post} currentUser={currentUser} />
       ))}
     </div>
   );

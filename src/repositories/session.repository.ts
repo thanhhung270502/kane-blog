@@ -49,8 +49,8 @@ export const SessionRepository = {
       email: row.email,
       name: row.name,
       role: row.role as EUserRole,
-      phone: row.phone,
-      avatarUrl: row.avatar_path ? await getDownloadUrl(row.avatar_path) : null,
+      phone: row.phone ?? undefined,
+      avatarUrl: row.avatar_path ? await getDownloadUrl(row.avatar_path) : undefined,
     };
   },
 

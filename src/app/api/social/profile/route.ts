@@ -1,5 +1,5 @@
 import type { UpsertProfileRequest } from "@common";
-import type { NextRequest} from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { getSessionUser } from "@/libs/auth-session";
@@ -12,7 +12,7 @@ export async function GET(_request: NextRequest) {
   }
 
   try {
-    const { profile } = await PostService.getProfile(user.id, user.id);
+    const { profile } = await PostService.getProfile(user.id);
     return NextResponse.json({ profile, friendshipStatus: null });
   } catch {
     return NextResponse.json({ message: "Failed to fetch profile" }, { status: 500 });

@@ -57,7 +57,7 @@ export const toggleReaction = async (
   data: ToggleReactionRequest = {}
 ): Promise<ToggleReactionResponse> => {
   const response = await postRequest({
-    path: API_TOGGLE_REACTION.buildUrlPath(postId),
+    path: API_TOGGLE_REACTION.buildUrlPath({ id: postId }),
     data,
   });
   return response.data;
@@ -69,7 +69,7 @@ export const getComments = async (
   limit = 20
 ): Promise<GetCommentsResponse> => {
   return await getRequest({
-    path: API_GET_COMMENTS.buildUrlPath(postId),
+    path: API_GET_COMMENTS.buildUrlPath({ id: postId }),
     params: { ...(cursor ? { cursor } : {}), limit },
   });
 };
@@ -79,7 +79,7 @@ export const createComment = async (
   data: CreateCommentRequest
 ): Promise<CreateCommentResponse> => {
   const response = await postRequest({
-    path: API_CREATE_COMMENT.buildUrlPath(postId),
+    path: API_CREATE_COMMENT.buildUrlPath({ id: postId }),
     data,
   });
   return response.data;
@@ -105,14 +105,14 @@ export const respondFriendRequest = async (
   data: RespondFriendRequestRequest
 ): Promise<RespondFriendRequestResponse> => {
   const response = await patchRequest({
-    path: API_RESPOND_FRIEND_REQUEST.buildUrlPath(friendshipId),
+    path: API_RESPOND_FRIEND_REQUEST.buildUrlPath({ id: friendshipId }),
     data,
   });
   return response.data;
 };
 
 export const removeFriend = async (friendshipId: string): Promise<void> => {
-  await deleteRequest({ path: API_REMOVE_FRIEND.buildUrlPath(friendshipId) });
+  await deleteRequest({ path: API_REMOVE_FRIEND.buildUrlPath({ id: friendshipId }) });
 };
 
 export const getPendingRequests = async (): Promise<GetPendingFriendRequestsResponse> => {
@@ -124,7 +124,7 @@ export const getFriends = async (): Promise<GetFriendsResponse> => {
 };
 
 export const getUserProfile = async (userId: string): Promise<GetProfileResponse> => {
-  return await getRequest({ path: API_GET_PROFILE.buildUrlPath(userId) });
+  return await getRequest({ path: API_GET_PROFILE.buildUrlPath({ id: userId }) });
 };
 
 export const getMyProfile = async (): Promise<GetProfileResponse> => {
@@ -142,7 +142,7 @@ export const getUserPosts = async (
   limit = 20
 ): Promise<GetUserPostsResponse> => {
   return await getRequest({
-    path: API_GET_USER_POSTS.buildUrlPath(userId),
+    path: API_GET_USER_POSTS.buildUrlPath({ id: userId }),
     params: { ...(cursor ? { cursor } : {}), limit },
   });
 };
@@ -151,10 +151,7 @@ export const getUserPosts = async (
  * Upload a profile image (avatar or cover) to S3 and update the user profile.
  * Flow: get presigned PUT URL → upload file to S3 → upsert profile with the image path.
  */
-export const uploadProfileImage = async (
-  kind: "avatar" | "cover",
-  file: File
-): Promise<void> => {
+export const uploadProfileImage = async (kind: "avatar" | "cover", file: File): Promise<void> => {
   const ext = file.type.replace("image/", "");
 
   // 1. Get presigned upload URL from our API

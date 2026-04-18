@@ -29,9 +29,7 @@ export const UserRepository = {
   /**
    * Public user row for profile APIs (no email or auth secrets).
    */
-  async findPublicById(
-    userId: string
-  ): Promise<{
+  async findPublicById(userId: string): Promise<{
     id: string;
     name: string;
     role: string;
@@ -71,7 +69,7 @@ export const UserRepository = {
       email: string;
       name: string;
       role: string;
-      phone: string | null;
+      phone?: string;
     }>(
       `INSERT INTO users (email, password_hash, name)
        VALUES ($1, $2, $3)
@@ -79,7 +77,7 @@ export const UserRepository = {
       [email, passwordHash, name]
     );
     const row = result.rows[0];
-    return { ...row, role: row.role as EUserRole, avatarUrl: null };
+    return { ...row, role: row.role as EUserRole, avatarUrl: undefined, phone: undefined };
   },
 
   /**
@@ -99,7 +97,15 @@ export const UserRepository = {
       [email, name, googleSub]
     );
     const row = result.rows[0];
-    return { ...row, role: row.role as EUserRole, avatarUrl: null };
+    return {
+      ...row,
+      role: row.role as EUserRole,
+      avatarUrl: undefined,
+      phone: undefined,
+      bio: undefined,
+      coverUrl: undefined,
+      createdAt: new Date().toISOString(),
+    };
   },
 
   /**

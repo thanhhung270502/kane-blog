@@ -88,7 +88,13 @@ export const AuthService = {
           profile.name,
           profile.sub
         );
-        user = { ...created, password_hash: null, google_sub: profile.sub, avatar_path: null };
+        user = {
+          ...created,
+          password_hash: null,
+          google_sub: profile.sub,
+          avatar_path: null,
+          phone: null,
+        };
       }
     }
 
