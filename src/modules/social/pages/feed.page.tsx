@@ -12,7 +12,6 @@ interface FeedPageProps {
 
 export const FeedPage = ({ currentUser }: FeedPageProps) => {
   const { data: feedData, isLoading: isFeedLoading } = useQueryFeed();
-  // const { data: profileData } = useQueryMyProfile();
 
   const feed = (feedData as GetFeedResponse | undefined)?.posts ?? [];
 

@@ -1,24 +1,33 @@
-import { Pool } from "@neondatabase/serverless";
+import { Pool as NeonPool } from "@neondatabase/serverless";
+import { Pool as PgPool } from "pg";
 
 import { logger } from "./logger";
 
-let _pool: Pool | null = null;
+type AnyPool = NeonPool | PgPool;
 
-/**
- * Get or create the Neon Postgres connection pool.
- * Lazily initialized to avoid errors during build when DATABASE_URL is not set.
- */
-function getPool(): Pool {
+let _pool: AnyPool | null = null;
+
+function getPool(): AnyPool {
   if (!_pool) {
     const connectionString = process.env.DATABASE_URL;
     if (!connectionString) {
       throw new Error("DATABASE_URL environment variable is not set");
     }
     try {
-      _pool = new Pool({ connectionString });
+      if (process.env.NODE_ENV === "production") {
+        _pool = new NeonPool({ connectionString });
+      } else {
+        _pool = new PgPool({
+          user: process.env.DATABASE_USER,
+          password: process.env.DATABASE_PASSWORD,
+          host: process.env.DATABASE_HOST,
+          port: parseInt(process.env.DATABASE_PORT ?? "5439"),
+          database: process.env.DATABASE_NAME,
+        });
+      }
     } catch (error) {
-      logger.error("Failed to create Neon Postgres connection pool", { error });
-      throw new Error("Failed to create Neon Postgres connection pool");
+      logger.error("Failed to create Postgres connection pool", { error });
+      throw new Error("Failed to create Postgres connection pool");
     }
   }
   return _pool;

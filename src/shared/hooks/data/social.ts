@@ -13,6 +13,7 @@ import type {
   ToggleReactionRequest,
   ToggleReactionResponse,
   UpsertProfileRequest,
+  UpsertProfileResponse,
 } from "@common";
 import { toast } from "sonner";
 
@@ -289,26 +290,48 @@ export const useQueryUserPosts = (userId: string, props: QueryProps<GetUserPosts
 
 // ─── Profile image uploads ─────────────────────────────────────────────────────
 
-export const useUploadAvatarMutation = (props: MutationProps<void, File> = {}) => {
+export const useUploadAvatarMutation = (props: MutationProps<UpsertProfileResponse, File> = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (file: File) => uploadProfileImage("avatar", file),
-    onSuccess: async () => {
+    onSuccess: (data) => {
       toast.success("Avatar updated");
-      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.myProfile() });
+      queryClient.setQueryData(
+        SOCIAL_KEYS.profile(data.profile.userId),
+        (old: GetProfileResponse) => {
+          return {
+            ...old,
+            profile: {
+              ...old.profile,
+              avatarUrl: data.profile.avatarUrl,
+            },
+          };
+        }
+      );
     },
     onError: (error) => toast.error(asError(error).message),
     ...props,
   });
 };
 
-export const useUploadCoverMutation = (props: MutationProps<void, File> = {}) => {
+export const useUploadCoverMutation = (props: MutationProps<UpsertProfileResponse, File> = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (file: File) => uploadProfileImage("cover", file),
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       toast.success("Cover photo updated");
-      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.myProfile() });
+      queryClient.setQueryData(
+        SOCIAL_KEYS.profile(data.profile.userId),
+        (old: GetProfileResponse) => {
+          return {
+            ...old,
+            profile: {
+              ...old.profile,
+              coverUrl: data.profile.coverUrl,
+            },
+          };
+        }
+      );
     },
     onError: (error) => toast.error(asError(error).message),
     ...props,

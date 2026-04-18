@@ -18,6 +18,7 @@ import type {
   UpsertProfileRequest,
   UpsertProfileResponse,
 } from "@common";
+import { EAttachmentKind } from "@common";
 import {
   API_CREATE_COMMENT,
   API_CREATE_POST,
@@ -151,7 +152,10 @@ export const getUserPosts = async (
  * Upload a profile image (avatar or cover) to S3 and update the user profile.
  * Flow: get presigned PUT URL → upload file to S3 → upsert profile with the image path.
  */
-export const uploadProfileImage = async (kind: "avatar" | "cover", file: File): Promise<void> => {
+export const uploadProfileImage = async (
+  kind: "avatar" | "cover",
+  file: File
+): Promise<UpsertProfileResponse> => {
   const ext = file.type.replace("image/", "");
 
   // 1. Get presigned upload URL from our API
@@ -174,5 +178,37 @@ export const uploadProfileImage = async (kind: "avatar" | "cover", file: File): 
   }
 
   // 3. Persist the path on the profile
-  await upsertProfile(kind === "avatar" ? { avatarPath: imagePath } : { coverPath: imagePath });
+  const profile = await upsertProfile(
+    kind === "avatar" ? { avatarPath: imagePath } : { coverPath: imagePath }
+  );
+  return profile;
+};
+
+/**
+ * Upload a single image or video file as a post attachment.
+ * Flow: get presigned PUT URL → upload file to S3 → return attachment descriptor.
+ * Uses a pre-generated tempPostId so uploads can happen before post creation.
+ */
+export const uploadPostMediaFile = async (
+  file: File,
+  tempPostId: string,
+  sortOrder: number
+): Promise<NonNullable<CreatePostRequest["attachments"]>[number]> => {
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? file.type.split("/")[1] ?? "jpg";
+  const kind = file.type.startsWith("video/") ? EAttachmentKind.VIDEO : EAttachmentKind.IMAGE;
+
+  const res = await postRequest({
+    path: "/api/social/upload-url",
+    data: { kind: "post-attachment", postId: tempPostId, imageType: ext },
+  });
+  const { uploadUrl, imagePath } = res.data as { uploadUrl: string; imagePath: string };
+
+  const s3Response = await fetch(uploadUrl, {
+    method: "PUT",
+    body: file,
+    headers: { "Content-Type": file.type },
+  });
+  if (!s3Response.ok) throw new Error("Failed to upload media to storage");
+
+  return { url: imagePath, kind, sortOrder };
 };

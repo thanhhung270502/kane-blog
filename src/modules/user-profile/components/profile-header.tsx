@@ -1,8 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import type { EFriendshipStatus, UserObject, UserProfileObject } from "@common";
 import { Camera, CircleNotch, PencilSimple, UserMinus, UserPlus } from "@phosphor-icons/react";
-import { useRef } from "react";
 
 import { Button, Typography } from "@/shared/components";
 

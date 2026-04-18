@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type CurrentUserObject, EReactionType, type PostObject } from "@common";
+import { type CurrentUserObject, EAttachmentKind, EReactionType, type PostObject } from "@common";
 import { ChatCircle, HeartIcon, Share, Trash } from "@phosphor-icons/react";
 import { cn } from "@tailwind-config/utils/cn";
 
@@ -79,15 +79,25 @@ export const PostCard = ({ post, currentUser, isSharedEmbed = false }: PostCardP
         <div
           className={`grid gap-1 overflow-hidden ${post.attachments.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
         >
-          {post.attachments.slice(0, 4).map((att) => (
-            <img
-              key={att.id}
-              src={att.url}
-              alt=""
-              className="w-full object-cover"
-              style={{ maxHeight: 320 }}
-            />
-          ))}
+          {post.attachments.slice(0, 4).map((att) =>
+            att.kind === EAttachmentKind.VIDEO ? (
+              <video
+                key={att.id}
+                src={att.url}
+                controls
+                className="w-full object-cover"
+                style={{ maxHeight: 320 }}
+              />
+            ) : (
+              <img
+                key={att.id}
+                src={att.url}
+                alt=""
+                className="w-full object-cover"
+                style={{ maxHeight: 320 }}
+              />
+            )
+          )}
         </div>
       )}
 

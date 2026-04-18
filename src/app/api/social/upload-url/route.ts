@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 
 import { getSessionUser } from "@/libs/auth-session";
 import {
-  ALLOWED_IMAGE_TYPES,
+  ALLOWED_MEDIA_TYPES,
   buildPostAttachmentPath,
   buildUserAvatarPath,
   buildUserCoverPath,
   getUploadUrl,
-  mimeTypeForImageExt,
+  mimeTypeForMediaExt,
 } from "@/libs/s3";
 
 type UploadKind = "avatar" | "cover" | "post-attachment";
@@ -35,10 +35,10 @@ export async function POST(request: NextRequest) {
     const body: UploadUrlRequest = await request.json();
     const { kind, postId, imageType } = body;
 
-    const ext = imageType.toLowerCase().replace(/^image\//, "");
-    if (!(ALLOWED_IMAGE_TYPES as readonly string[]).includes(ext)) {
+    const ext = imageType.toLowerCase().replace(/^(image|video)\//, "");
+    if (!(ALLOWED_MEDIA_TYPES as readonly string[]).includes(ext)) {
       return NextResponse.json(
-        { message: `Unsupported image type. Allowed: ${ALLOWED_IMAGE_TYPES.join(", ")}` },
+        { message: `Unsupported media type. Allowed: ${ALLOWED_MEDIA_TYPES.join(", ")}` },
         { status: 400 }
       );
     }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Invalid upload kind" }, { status: 400 });
     }
 
-    const contentType = mimeTypeForImageExt(ext);
+    const contentType = mimeTypeForMediaExt(ext);
     const uploadUrl = await getUploadUrl(imagePath, contentType);
     const response: UploadUrlResponse = { uploadUrl, imagePath };
     return NextResponse.json(response);

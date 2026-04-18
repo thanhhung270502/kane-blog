@@ -88,7 +88,13 @@ async function buildPostObjects(rows: PostRow[], viewerId: string): Promise<Post
     ]
   );
 
-  const attachmentRows = await PostRepository.getAttachmentsByPostIds(postIds);
+  const rawAttachmentRows = await PostRepository.getAttachmentsByPostIds(postIds);
+  const attachmentRows = await Promise.all(
+    rawAttachmentRows.map(async (att) => ({
+      ...att,
+      url: att.s3_key ? ((await resolveImageUrl(att.s3_key)) ?? att.url) : att.url,
+    }))
+  );
 
   const profilesMap = new Map(profiles.map((p) => [p.user_id, p]));
   const reactionMap = new Map(reactionCounts.map((r) => [r.post_id, parseInt(r.count, 10)]));
@@ -188,6 +194,7 @@ export const PostService = {
         row.id,
         data.attachments.map((a) => ({
           url: a.url,
+          s3Key: a.url,
           kind: a.kind,
           sortOrder: a.sortOrder,
         }))

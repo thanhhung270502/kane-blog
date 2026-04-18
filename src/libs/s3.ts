@@ -6,10 +6,25 @@ const PRESIGNED_URL_EXPIRES_SECONDS = 3600; // 1 hour
 export const ALLOWED_IMAGE_TYPES = ["jpg", "jpeg", "png", "webp", "gif"] as const;
 export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
 
+export const ALLOWED_VIDEO_TYPES = ["mp4", "mov", "webm"] as const;
+export type AllowedVideoType = (typeof ALLOWED_VIDEO_TYPES)[number];
+
+export const ALLOWED_MEDIA_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES] as const;
+export type AllowedMediaType = (typeof ALLOWED_MEDIA_TYPES)[number];
+
 /** MIME type for S3 PutObject / browser upload; must match `file.type` from the client. */
 export function mimeTypeForImageExt(ext: string): string {
   const e = ext.toLowerCase();
   if (e === "jpg" || e === "jpeg") return "image/jpeg";
+  return `image/${e}`;
+}
+
+export function mimeTypeForMediaExt(ext: string): string {
+  const e = ext.toLowerCase();
+  if (e === "jpg" || e === "jpeg") return "image/jpeg";
+  if (e === "mp4") return "video/mp4";
+  if (e === "mov") return "video/quicktime";
+  if (e === "webm") return "video/webm";
   return `image/${e}`;
 }
 
