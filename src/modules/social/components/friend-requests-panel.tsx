@@ -5,19 +5,17 @@ import { EFriendshipStatus } from "@common";
 import { Check, X } from "@phosphor-icons/react";
 
 import { Button, Skeleton, Typography } from "@/shared/components";
-// import { useQueryPendingRequests, useRespondFriendRequestMutation } from "@/shared/hooks";
-import { useRespondFriendRequestMutation } from "@/shared/hooks";
+import { useQueryPendingRequests, useRespondFriendRequestMutation } from "@/shared/hooks";
 
 import { PostAuthorAvatar } from "./post/post-author-avatar";
 
 export const FriendRequestsPanel = () => {
-  // const { data, isLoading } = useQueryPendingRequests();
-  const data: GetPendingFriendRequestsResponse = { friendships: [] };
+  const { data, isLoading } = useQueryPendingRequests();
   const { mutate: respond, isPending } = useRespondFriendRequestMutation();
 
   const pending = (data as GetPendingFriendRequestsResponse | undefined)?.friendships ?? [];
 
-  if (false) {
+  if (isLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-14 w-full" />

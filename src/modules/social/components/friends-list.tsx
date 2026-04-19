@@ -3,16 +3,15 @@
 import type { GetFriendsResponse } from "@common";
 
 import { Skeleton, Typography } from "@/shared/components";
+import { useQueryFriends } from "@/shared/hooks";
 
-// import { useQueryFriends } from "@/shared/hooks";
 import { PostAuthorAvatar } from "./post/post-author-avatar";
 
 export const FriendsList = () => {
-  // const { data, isLoading } = useQueryFriends();
-  const data = { friends: [] };
+  const { data, isLoading } = useQueryFriends();
   const friends = (data as GetFriendsResponse | undefined)?.friends ?? [];
 
-  if (false) {
+  if (isLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-12 w-full" />

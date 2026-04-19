@@ -14,12 +14,12 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   const { id } = await params;
 
   try {
-    const [{ profile }, friendshipStatus] = await Promise.all([
+    const [{ profile }, { status: friendshipStatus, friendshipId }] = await Promise.all([
       PostService.getProfile(id),
       FriendshipService.getStatus(user.id, id),
     ]);
 
-    return NextResponse.json({ profile, friendshipStatus });
+    return NextResponse.json({ profile, friendshipStatus, friendshipId });
   } catch {
     return NextResponse.json({ message: "Failed to fetch profile" }, { status: 500 });
   }

@@ -165,10 +165,14 @@ export const FriendshipService = {
   },
 
   /**
-   * Get friendship status between two users.
+   * Get friendship status and id between two users.
    */
-  async getStatus(userAId: string, userBId: string): Promise<EFriendshipStatus | null> {
+  async getStatus(
+    userAId: string,
+    userBId: string
+  ): Promise<{ status: EFriendshipStatus | null; friendshipId: string | null }> {
     const row = await FriendshipRepository.findBetween(userAId, userBId);
-    return row ? (row.status as EFriendshipStatus) : null;
+    if (!row) return { status: null, friendshipId: null };
+    return { status: row.status as EFriendshipStatus, friendshipId: row.id };
   },
 };

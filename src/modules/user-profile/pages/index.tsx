@@ -1,5 +1,7 @@
 "use client";
 
+import type { PostAuthorObject } from "@common";
+
 import { PostComposer } from "@/modules/social/components";
 import { Skeleton } from "@/shared/components";
 import {
@@ -37,7 +39,7 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
   const posts = postsData?.posts ?? [];
 
   // Find the friendship id for removal
-  const myFriends = (friendsData as { friends: { id: string }[] } | undefined)?.friends ?? [];
+  const myFriends = (friendsData as { friends: PostAuthorObject[] } | undefined)?.friends ?? [];
   const friendshipId = (profileData as { friendshipId?: string } | undefined)?.friendshipId ?? null;
 
   const handleAddFriend = () => {
@@ -93,7 +95,7 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
       <div className="flex gap-4">
         {/* Left: intro + friends */}
         <div className="hidden w-80 shrink-0 md:block">
-          <ProfileInfoSidebar profile={profile} friends={[]} />
+          <ProfileInfoSidebar profile={profile} friends={isOwnProfile ? myFriends : []} />
         </div>
 
         {/* Right: posts */}
