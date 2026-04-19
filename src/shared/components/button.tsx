@@ -193,11 +193,35 @@ const buttonVariants = cva(
           "active:bg-brand-secondary-alt",
           "disabled:text-brand-secondary-disabled",
         ],
+        "no-outlined-black-tertiary": [
+          "bg-transparent text-black-tertiary border border-transparent font-semibold",
+          "hover:bg-black-quaternary",
+          "active:bg-black-quaternary",
+          "disabled:text-black-tertiary-disabled",
+        ],
+        "no-outlined-black-quaternary": [
+          "bg-transparent text-black-quaternary border border-transparent font-semibold",
+          "hover:bg-black-quaternary",
+          "active:bg-black-quaternary",
+          "disabled:text-black-quaternary-disabled",
+        ],
         "no-outlined-quaternary": [
           "bg-transparent text-brand-quaternary border border-transparent font-semibold",
           "hover:bg-brand-quaternary-alt",
           "active:bg-brand-quaternary-alt",
           "disabled:text-brand-quaternary-disabled",
+        ],
+        "no-outlined-white-primary": [
+          "bg-transparent text-white-primary border border-transparent font-semibold",
+          "hover:bg-black-quaternary",
+          "active:bg-black-quaternary",
+          "disabled:text-white-primary-disabled",
+        ],
+        "no-outlined-white-secondary": [
+          "bg-transparent text-white-secondary border border-transparent font-semibold",
+          "hover:bg-black-quaternary",
+          "active:bg-black-quaternary",
+          "disabled:text-white-secondary-disabled",
         ],
       },
       size: {

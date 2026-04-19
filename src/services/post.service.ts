@@ -15,11 +15,12 @@ import type {
   UpsertProfileResponse,
   UserProfileRow,
 } from "@common";
-import { EPostVisibility } from "@common";
+import { ENotificationType, EPostVisibility } from "@common";
 
 import { getDownloadUrl } from "@/libs/s3";
 import { PostRepository } from "@/repositories/post.repository";
 import { UserRepository } from "@/repositories/user.repository";
+import { NotificationService } from "@/services/notification.service";
 
 /** Resolve an S3 path to a presigned download URL. Returns null if path is null/empty. */
 async function resolveImageUrl(path: string | null | undefined): Promise<string | null> {
@@ -226,6 +227,10 @@ export const PostService = {
       await PostRepository.removeReaction(postId, userId);
     } else {
       await PostRepository.addReaction(postId, userId, type);
+      const post = await PostRepository.findById(postId);
+      if (post) {
+        await NotificationService.notify(post.author_id, userId, ENotificationType.POST_REACTION, postId);
+      }
     }
 
     const reactionsCount = await PostRepository.countReactions(postId);
@@ -277,6 +282,12 @@ export const PostService = {
     const profiles = await PostRepository.findProfilesByUserIds([authorId]);
     const profilesMap = new Map(profiles.map((p) => [p.user_id, p]));
     const author = await buildAuthor(authorId, profilesMap);
+
+    const post = await PostRepository.findById(postId);
+    if (post) {
+      await NotificationService.notify(post.author_id, authorId, ENotificationType.POST_COMMENT, postId);
+    }
+
     return { comment: toCommentObject(row, author) };
   },
 
@@ -289,6 +300,10 @@ export const PostService = {
     body?: string
   ): Promise<CreatePostResponse> {
     await PostRepository.recordShare(originalPostId, userId);
+    const original = await PostRepository.findById(originalPostId);
+    if (original) {
+      await NotificationService.notify(original.author_id, userId, ENotificationType.POST_SHARE, originalPostId);
+    }
     return this.createPost(userId, {
       body: body ?? undefined,
       sharedPostId: originalPostId,

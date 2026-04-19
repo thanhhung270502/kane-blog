@@ -6,9 +6,11 @@ import type {
   GetCommentsResponse,
   GetFeedResponse,
   GetFriendsResponse,
+  GetNotificationsResponse,
   GetPendingFriendRequestsResponse,
   GetProfileResponse,
   GetUserPostsResponse,
+  MarkNotificationReadResponse,
   RespondFriendRequestRequest,
   RespondFriendRequestResponse,
   SendFriendRequestRequest,
@@ -25,9 +27,12 @@ import {
   API_GET_COMMENTS,
   API_GET_FEED,
   API_GET_FRIENDS,
+  API_GET_NOTIFICATIONS,
   API_GET_PENDING_FRIEND_REQUESTS,
   API_GET_PROFILE,
   API_GET_USER_POSTS,
+  API_MARK_ALL_NOTIFICATIONS_READ,
+  API_MARK_NOTIFICATION_READ,
   API_REMOVE_FRIEND,
   API_RESPOND_FRIEND_REQUEST,
   API_SEND_FRIEND_REQUEST,
@@ -211,4 +216,19 @@ export const uploadPostMediaFile = async (
   if (!s3Response.ok) throw new Error("Failed to upload media to storage");
 
   return { url: imagePath, kind, sortOrder };
+};
+
+// ─── Notifications ─────────────────────────────────────────────────────────────
+
+export const getNotifications = async (): Promise<GetNotificationsResponse> => {
+  return await getRequest({ path: API_GET_NOTIFICATIONS.buildUrlPath({}) });
+};
+
+export const markNotificationRead = async (id: string): Promise<MarkNotificationReadResponse> => {
+  const response = await patchRequest({ path: API_MARK_NOTIFICATION_READ.buildUrlPath({ id }), data: {} });
+  return response.data;
+};
+
+export const markAllNotificationsRead = async (): Promise<void> => {
+  await postRequest({ path: API_MARK_ALL_NOTIFICATIONS_READ.buildUrlPath({}), data: {} });
 };

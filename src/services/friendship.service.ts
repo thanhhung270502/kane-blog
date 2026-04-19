@@ -7,11 +7,13 @@ import type {
   RespondFriendRequestResponse,
   SendFriendRequestResponse,
 } from "@common";
+import { ENotificationType } from "@common";
 
 import { getDownloadUrl } from "@/libs/s3";
 import { FriendshipRepository } from "@/repositories/friendship.repository";
 import { PostRepository } from "@/repositories/post.repository";
 import { UserRepository } from "@/repositories/user.repository";
+import { NotificationService } from "@/services/notification.service";
 
 async function resolveAvatarUrl(path: string | null | undefined): Promise<string | null> {
   if (!path) return null;
@@ -72,6 +74,10 @@ export const FriendshipService = {
     );
 
     const friendship = await buildFriendshipObject(row, profilesMap);
+
+    // Notify addressee of the new request
+    await NotificationService.notify(addresseeId, requesterId, ENotificationType.FRIEND_REQUEST, row.id);
+
     return { friendship };
   },
 
@@ -106,6 +112,17 @@ export const FriendshipService = {
     );
 
     const friendship = await buildFriendshipObject(updated, profilesMap);
+
+    // Notify requester when their request is accepted
+    if (status === "accepted") {
+      await NotificationService.notify(
+        updated.requester_id,
+        addresseeId,
+        ENotificationType.FRIEND_ACCEPTED,
+        updated.id
+      );
+    }
+
     return { friendship };
   },
 

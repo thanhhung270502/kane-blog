@@ -10,9 +10,11 @@ import type {
   GetCommentsResponse,
   GetFeedResponse,
   GetFriendsResponse,
+  GetNotificationsResponse,
   GetPendingFriendRequestsResponse,
   GetProfileResponse,
   GetUserPostsResponse,
+  MarkNotificationReadResponse,
   RespondFriendRequestRequest,
   RespondFriendRequestResponse,
   SendFriendRequestRequest,
@@ -145,4 +147,29 @@ export const API_GET_USER_POSTS: APIDefinition<{ id: string }> = {
   subUrl: "/users/:id/posts",
   responseBody: {} as GetUserPostsResponse,
   buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/users/${id}/posts`,
+};
+
+/** Notifications */
+export const API_GET_NOTIFICATIONS: APIDefinition = {
+  method: APIMethod.GET,
+  baseUrl: APIBaseRoutes.SOCIAL,
+  subUrl: "/notifications",
+  responseBody: {} as GetNotificationsResponse,
+  buildUrlPath: () => `${APIBaseRoutes.SOCIAL}/notifications`,
+};
+
+export const API_MARK_NOTIFICATION_READ: APIDefinition<{ id: string }> = {
+  method: APIMethod.PATCH,
+  baseUrl: APIBaseRoutes.SOCIAL,
+  subUrl: "/notifications/:id",
+  responseBody: {} as MarkNotificationReadResponse,
+  buildUrlPath: ({ id }) => `${APIBaseRoutes.SOCIAL}/notifications/${id}`,
+};
+
+export const API_MARK_ALL_NOTIFICATIONS_READ: APIDefinition = {
+  method: APIMethod.POST,
+  baseUrl: APIBaseRoutes.SOCIAL,
+  subUrl: "/notifications/read-all",
+  responseBody: {},
+  buildUrlPath: () => `${APIBaseRoutes.SOCIAL}/notifications/read-all`,
 };

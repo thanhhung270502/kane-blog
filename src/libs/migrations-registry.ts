@@ -437,6 +437,9 @@ export const migrations: { name: string; sql: string }[] = [
         IF EXISTS (
           SELECT 1 FROM information_schema.columns
           WHERE table_name = 'users' AND column_name = 'avatar_url'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'users' AND column_name = 'avatar_path'
         ) THEN
           ALTER TABLE users RENAME COLUMN avatar_url TO avatar_path;
         END IF;
@@ -454,6 +457,9 @@ export const migrations: { name: string; sql: string }[] = [
         IF EXISTS (
           SELECT 1 FROM information_schema.columns
           WHERE table_name = 'user_profiles' AND column_name = 'avatar_url'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'user_profiles' AND column_name = 'avatar_path'
         ) THEN
           ALTER TABLE user_profiles RENAME COLUMN avatar_url TO avatar_path;
         END IF;
@@ -471,11 +477,44 @@ export const migrations: { name: string; sql: string }[] = [
         IF EXISTS (
           SELECT 1 FROM information_schema.columns
           WHERE table_name = 'user_profiles' AND column_name = 'cover_url'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'user_profiles' AND column_name = 'cover_path'
         ) THEN
           ALTER TABLE user_profiles RENAME COLUMN cover_url TO cover_path;
         END IF;
       END;
       $body$;
+    `,
+  },
+
+  // ── notifications ─────────────────────────────────────────────────────────
+  {
+    name: "037_create_notifications",
+    sql: `
+      CREATE TABLE IF NOT EXISTS notifications (
+        id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id    UUID        NOT NULL,
+        actor_id   UUID        NOT NULL,
+        type       TEXT        NOT NULL,
+        entity_id  UUID,
+        read_at    TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `,
+  },
+  {
+    name: "038_create_idx_notifications_user_created",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_notifications_user_created
+        ON notifications(user_id, created_at DESC);
+    `,
+  },
+  {
+    name: "039_create_idx_notifications_unread",
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_notifications_unread
+        ON notifications(user_id) WHERE read_at IS NULL;
     `,
   },
 ];

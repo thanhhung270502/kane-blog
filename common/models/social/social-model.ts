@@ -1,5 +1,13 @@
 // ─── Enums ───────────────────────────────────────────────────────────────────
 
+export enum ENotificationType {
+  FRIEND_REQUEST = "friend_request",
+  FRIEND_ACCEPTED = "friend_accepted",
+  POST_REACTION = "post_reaction",
+  POST_COMMENT = "post_comment",
+  POST_SHARE = "post_share",
+}
+
 export enum EPostVisibility {
   PUBLIC = "public",
   FRIENDS = "friends",
@@ -249,6 +257,39 @@ export interface UpsertProfileRequest {
 
 export interface UpsertProfileResponse {
   profile: UserProfileObject;
+}
+
+/** Notifications */
+
+export interface NotificationRow {
+  id: string;
+  user_id: string;
+  actor_id: string;
+  type: string;
+  entity_id: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface NotificationObject {
+  id: string;
+  userId: string;
+  actor: PostAuthorObject;
+  type: ENotificationType;
+  entityId: string | null;
+  isRead: boolean;
+  createdAt: string;
+  friendshipId?: string;
+  friendshipStatus?: EFriendshipStatus;
+}
+
+export interface GetNotificationsResponse {
+  notifications: NotificationObject[];
+  unreadCount: number;
+}
+
+export interface MarkNotificationReadResponse {
+  notification: NotificationObject;
 }
 
 /** User posts */

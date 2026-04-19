@@ -6,6 +6,7 @@ import type {
   CreatePostRequest,
   GetCommentsResponse,
   GetFeedResponse,
+  GetNotificationsResponse,
   GetProfileResponse,
   GetUserPostsResponse,
   RespondFriendRequestRequest,
@@ -27,9 +28,12 @@ import {
   getFeed,
   getFriends,
   getMyProfile,
+  getNotifications,
   getPendingRequests,
   getUserPosts,
   getUserProfile,
+  markAllNotificationsRead,
+  markNotificationRead,
   removeFriend,
   respondFriendRequest,
   sendFriendRequest,
@@ -332,6 +336,45 @@ export const useUploadCoverMutation = (props: MutationProps<UpsertProfileRespons
           };
         }
       );
+    },
+    onError: (error) => toast.error(asError(error).message),
+    ...props,
+  });
+};
+
+// ─── Notifications ─────────────────────────────────────────────────────────────
+
+export const useQueryNotifications = (props: QueryProps<GetNotificationsResponse> = {}) => {
+  return useQuery({
+    queryKey: SOCIAL_KEYS.notifications(),
+    queryFn: getNotifications,
+    refetchInterval: 30_000,
+    ...props,
+  });
+};
+
+export const useMarkNotificationReadMutation = (
+  props: MutationProps<unknown, string> = {}
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: markNotificationRead,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.notifications() });
+    },
+    onError: (error) => toast.error(asError(error).message),
+    ...props,
+  });
+};
+
+export const useMarkAllNotificationsReadMutation = (
+  props: MutationProps<unknown, void> = {}
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: markAllNotificationsRead,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: SOCIAL_KEYS.notifications() });
     },
     onError: (error) => toast.error(asError(error).message),
     ...props,

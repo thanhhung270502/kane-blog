@@ -1,7 +1,7 @@
 "use client";
 
 import type { PostAuthorObject, UserProfileObject } from "@common";
-import { Calendar, Info, Users } from "@phosphor-icons/react";
+import { Calendar, Info } from "@phosphor-icons/react";
 
 import { Separator, Typography, UserAvatar } from "@/shared/components";
 
@@ -34,7 +34,7 @@ export const ProfileInfoSidebar = ({ profile, friends }: ProfileInfoSidebarProps
 
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Calendar size={18} className="text-gray-400 shrink-0" />
+            <Calendar size={18} className="shrink-0 text-gray-400" />
             <Typography variant="body-sm" color="secondary">
               Joined {joinedDate}
             </Typography>
@@ -42,7 +42,7 @@ export const ProfileInfoSidebar = ({ profile, friends }: ProfileInfoSidebarProps
 
           {profile.username && (
             <div className="flex items-center gap-2">
-              <Info size={18} className="text-gray-400 shrink-0" />
+              <Info size={18} className="shrink-0 text-gray-400" />
               <Typography variant="body-sm" color="secondary">
                 @{profile.username}
               </Typography>
@@ -55,21 +55,25 @@ export const ProfileInfoSidebar = ({ profile, friends }: ProfileInfoSidebarProps
       {friends.length > 0 && (
         <div className="bg-black-secondary rounded-xl p-4 shadow-md">
           <div className="mb-3 flex items-center gap-2">
-            <Users size={18} className="text-gray-400" />
-            <Typography variant="heading-sm" weight="bold" color="primary">
+            <Typography variant="body-xl" weight="bold" color="primary">
               Friends
             </Typography>
             <Typography variant="body-sm" color="secondary">
-              · {friends.length}
+              - {friends.length}
             </Typography>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
             {friends.slice(0, 9).map((friend) => (
-              <div key={friend.id} className="flex flex-col items-center gap-1">
-                <UserAvatar name={friend.name} avatarUrl={friend.avatarUrl ?? undefined} size="md" />
-                <Typography variant="body-xs" color="secondary" className="truncate text-center w-full">
-                  {friend.name.split(" ")[0]}
+              <div key={friend.id} className="flex flex-col items-center gap-2">
+                <UserAvatar
+                  name={friend.name}
+                  avatarUrl={friend.avatarUrl ?? undefined}
+                  size="lg"
+                  sizeImage={100}
+                />
+                <Typography variant="body-xs" className="w-full truncate text-center">
+                  {friend.name}
                 </Typography>
               </div>
             ))}

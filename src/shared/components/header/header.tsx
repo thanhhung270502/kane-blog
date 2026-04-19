@@ -8,6 +8,8 @@ import Link from "next/link";
 
 import { AccountButton, Button, Input, useAuthRequest, useQueryMe } from "@/shared";
 
+import { NotificationButton } from "./notification-button";
+
 export const Header = () => {
   const { onOpenLogin } = useAuthRequest();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,7 +52,8 @@ export const Header = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex w-1/3 items-center justify-end gap-8">
+        <div className="flex w-1/3 items-center justify-end gap-2">
+          <NotificationButton />
           <AccountButton />
         </div>
       </div>

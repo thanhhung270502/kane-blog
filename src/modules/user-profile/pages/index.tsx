@@ -94,7 +94,7 @@ export const UserProfilePage = ({ userId }: UserProfilePageProps) => {
       {/* Two-column layout */}
       <div className="flex gap-4">
         {/* Left: intro + friends */}
-        <div className="hidden w-80 shrink-0 md:block">
+        <div className="hidden w-full max-w-[350px] shrink-0 md:block lg:max-w-[450px]">
           <ProfileInfoSidebar profile={profile} friends={isOwnProfile ? myFriends : []} />
         </div>
 
