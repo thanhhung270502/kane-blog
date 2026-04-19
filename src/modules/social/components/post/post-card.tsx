@@ -81,6 +81,7 @@ export const PostCard = ({ post, currentUser, isSharedEmbed = false }: PostCardP
         >
           {post.attachments.slice(0, 4).map((att) =>
             att.kind === EAttachmentKind.VIDEO ? (
+              // eslint-disable-next-line jsx-a11y/media-has-caption
               <video
                 key={att.id}
                 src={att.url}
